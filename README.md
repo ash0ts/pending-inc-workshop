@@ -50,22 +50,12 @@ Refresh and reconnect using the same attendee token and project. Reuse the same 
 
 A partially exported trace can require repair. Do not run the employee again to repair telemetry. Preserve its audit record and ask the facilitator to inspect the failed export.
 
-## Recorded path
+## Inspect your code and results
 
-Local tool, message-handoff, timeout and scorer exercises require no provider connection. **Open recorded development evidence** shows the code-first rehearsal using worked answers. Your new edits did not produce those recorded results. The replay includes no fresh-case fixtures or final grader.
+The **Office Lab source** viewer opens your draft instructions and the Python behind the harness, tools and improvement controller. The code map links to the same files on GitHub.
 
-## Preview and access
+![The employee’s handbook inside marimo](preview/handbook.png)
 
-![The office and code exercises](preview/office.png)
+Native EvalTables publication is currently returning HTTP 500. Use the notebook’s case-by-case score table and saved Weave evaluations to compare your results. Agent Lens links connect each completed attempt to its tool activity. The final Report preserves your conclusion and evidence; publication retries reuse saved executions.
 
-[Watch the earlier captioned walkthrough](preview/pending-code.mp4) · [Captions](preview/pending-code.vtt). It records the previous release; its results are historical.
-
-The earlier full browser rehearsal completed both improvement rounds, all twelve fresh executions and all twelve explanation judgments. All three versions passed four state checks; both compositions retained the manual harness. No quality gain is claimed. [Browser check summary](browser-validation.json).
-
-This teaching revision moves instrumentation earlier and adds recurring Forge checkpoints and a source viewer. Desktop/mobile free exercises and source controls were checked separately. Saved Sandbox and original-run spans were verified without repeating model inference. Existing working copies are not overwritten by a template update; save your edits and journal before updating.
-
-Native EvalTables publication remains unavailable (HTTP 500). The notebook shows the saved Weave evaluations, W&B artifacts and Report so publication failure does not strand your work. Agent Lens conversations and tool spans were checked in Chrome.
-
-The shared gateway runs in an operator-owned CoreWeave Sandbox with protected HTTPS and a fixed lifetime shown in the notebook. State backups are private. The notebook includes a case-by-case score table and saved Weave links when native EvalTables is unavailable. Access from an external attendee account, 50-attendee timing and a human learning rehearsal are separate release checks.
-
-![The invoice tool in Agent Lens](preview/24-native-agent-lens.png)
+Local tool, message-handoff, timeout and scorer exercises work without a provider connection. Model runs and remote Sandbox tests need your workshop connection.

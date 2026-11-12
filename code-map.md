@@ -1,6 +1,6 @@
 # Open the employee's handbook
 
-The notebook builds the employee, its checks, and the editor that changes its harness. Use the **Office Lab source** selector near the end of the notebook to read the code without leaving marimo. The viewer shows the source bundled with that release. The editable cells show your own changes.
+The notebook builds the employee, its checks, and the editor that changes its harness. Use the **Office Lab source** selector near the end of the notebook to read the code without leaving marimo. The viewer shows the bundled source and your draft harness files. The editable cells show your own changes.
 
 ## Follow one ticket
 
@@ -33,7 +33,3 @@ In **Clock in**, send the environment trace and open it in Agent Lens. While bui
 For each attempt, find one tool call and read what the model did next. During evaluation, follow a result back to that conversation and its executed harness. A tool error and an incorrect account state are different observations.
 
 Export failures do not discard the execution. Repair the instrumentation and use **Export / verify my Sandbox tool test**, **Export / verify my original execution**, or **Inspect saved branches and their evidence**. These actions export saved work without repeating inference.
-
-## Existing copies
-
-The revised template does not overwrite an open notebook. Finish an active run in your current copy. Save your edited notebook and `.pending-code/journal` before updating. Reconnect with the same attendee token and project to reuse gateway executions. Keep your registered executor and tool source unchanged after the baseline starts.

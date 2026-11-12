@@ -11,22 +11,12 @@ Participants need a Forge account with hosted Notebook/Sandbox access, a project
 3. Find **Clock in**. The project field should already contain the destination of your copy, in `team/project` form. The gateway URL is also filled in. Keep both values unless the facilitator supplies a correction.
 4. Paste the **attendee token** and **gateway access token** from your private access sheet into their password fields. Click **Check connection**. The receipt must show your attendee ID and `pending-v4-code-r2`.
 5. Click **Send my first Forge trace**, then **Open my setup conversation**. Confirm the tool event appears in Agent Lens. Forge provides the runtime credential automatically; do not paste an API key into notebook code.
-6. Continue to **Equipment was not included**. Implement `lookup_invoice`, run its local checks, complete the tool-observation handoff, and register the code in a Sandbox. The remaining chapters instrument, evaluate, and improve that employee.
+6. Continue to **Equipment was not included**. Implement `lookup_invoice`, run its local checks, add its Forge tool span, complete the tool-observation handoff, and register the code in a Sandbox. Open the returned Agent Lens conversation before continuing to the employee’s first model run. The remaining chapters evaluate and improve that employee.
 7. Save the notebook before leaving. Keep your copy's URL. Completed model executions are reused after reconnection; publication retries do not rerun the agent.
 
 The public template grants reading and copying access. It does **not** grant membership in W&B's internal team or the entitlement to launch a hosted runtime. If your own team cannot launch one, use the laptop path below with a writable Forge project and the same two workshop tokens.
 
 Each attendee uses a separate token, notebook copy, saved progress, and harness. Keep your token private and reuse it after reconnecting. You can use a shared Forge project if you have write permission, but never share a token or notebook copy. The project field identifies where traces go, not a partner or an assigned team.
-
-## Host checklist
-
-- Share the template link and one private access sheet per attendee. Each sheet contains that attendee's token and the endpoint access token. Never publish these sheets in the template, repository, chat recording, or slides.
-- Confirm each attendee has a writable project and hosted Notebook/Sandbox access. There is no automatically assigned team project. If you want a shared workshop team, create/invite members explicitly; do not assume attendees can write into `wandb`.
-- Ask one attendee to copy, launch, connect, and open their setup trace before the room begins. The operator account has completed these checks; an external attendee account still needs this permission check.
-- The deployed gateway is a protected CoreWeave service, independent of the facilitator's laptop. Its current window ends **November 12 at 5:59 p.m. Eastern**. Stop or renew it deliberately after the workshop; the endpoint is not permanent.
-- There are 50 individual workshop accounts. Each has a $4 model-call limit, with retries included. The $200 live allocation and $300 total ceiling still apply across everyone, including compute. An allowance is a maximum, not guaranteed reserved capacity. Private state backups are stored separately from participant material.
-- At the earlier maximum-retry forecast, 50 full paths cost $292.73 before attendee notebook hosting, exceeding the $200 live allocation by $92.73. The $4 personal cap can stop a retry-heavy path earlier. Do not promise 50 complete live paths within this budget; use the recorded fallback if a limit is reached.
-- A 50-attendee timing test and human learning rehearsal are still outstanding. Do not describe single-attendee qualification as a load test.
 
 ## If EvalTables is unavailable
 
@@ -58,7 +48,3 @@ Install [uv](https://docs.astral.sh/uv/getting-started/installation/) first. Use
 | Gateway is unreachable | Check its lifetime and ask the host for status. Never use the host's `localhost` in a hosted notebook. |
 | Trace export stops | Retry export from the saved audit record. Do not rerun inference. |
 | Native EvalTables returns 500 | Use the notebook table and Weave links; retry publication later. |
-
-## Operator records
-
-The standalone operator repository holds the deployment script, private access files, and validation receipts. They are deliberately excluded from this public participant checkout. The operator runs `PYTHONPATH=. uv run python scripts/provision_office_attendees.py --hosted --count 50` with operator authentication to create or retrieve individual credentials. Repeating the command reuses existing tokens and preserves progress. Its private instruction-file directory is `.context/hosted-gateway/individual-access/` in that repository. The source and private grader are not part of `wandb/core` product code.
