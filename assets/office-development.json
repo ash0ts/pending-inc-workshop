@@ -1,0 +1,137 @@
+[
+  {
+    "id": "double-charge",
+    "title": "The Double Charge",
+    "split": "development",
+    "mission": "Account acme was charged twice for invoice inv-1. Keep the original payment pay-1, refund the duplicate, and explain the result.",
+    "initial": {
+      "accounts": {
+        "acme": {
+          "id": "acme",
+          "name": "Example customer",
+          "subscription": {
+            "status": "active",
+            "paid": true
+          },
+          "payments": [
+            {
+              "id": "pay-1",
+              "invoice_id": "inv-1",
+              "amount_cents": 4900,
+              "status": "captured"
+            },
+            {
+              "id": "pay-2",
+              "invoice_id": "inv-1",
+              "amount_cents": 4900,
+              "status": "captured"
+            }
+          ],
+          "refunds": [],
+          "members": []
+        },
+        "other-account": {
+          "id": "other-account",
+          "name": "Unrelated customer",
+          "subscription": {
+            "status": "active",
+            "paid": true
+          },
+          "payments": [
+            {
+              "id": "pay-1",
+              "invoice_id": "inv-1",
+              "amount_cents": 4900,
+              "status": "captured"
+            },
+            {
+              "id": "pay-2",
+              "invoice_id": "inv-1",
+              "amount_cents": 4900,
+              "status": "captured"
+            }
+          ],
+          "refunds": [],
+          "members": []
+        }
+      },
+      "operations": {},
+      "journal": [],
+      "faults_seen": []
+    },
+    "objective": {
+      "account_id": "acme",
+      "kind": "refund",
+      "payment_id": "pay-2"
+    },
+    "fault": ""
+  },
+  {
+    "id": "missing-seat",
+    "title": "The Request That Timed Out but Apparently Worked",
+    "split": "development",
+    "mission": "Add alex@example.test as a member of paid account fern. Confirm the access exists and explain what happened.",
+    "initial": {
+      "accounts": {
+        "fern": {
+          "id": "fern",
+          "name": "Example customer",
+          "subscription": {
+            "status": "active",
+            "paid": true
+          },
+          "payments": [
+            {
+              "id": "pay-1",
+              "invoice_id": "inv-1",
+              "amount_cents": 4900,
+              "status": "captured"
+            },
+            {
+              "id": "pay-2",
+              "invoice_id": "inv-1",
+              "amount_cents": 4900,
+              "status": "captured"
+            }
+          ],
+          "refunds": [],
+          "members": []
+        },
+        "other-account": {
+          "id": "other-account",
+          "name": "Unrelated customer",
+          "subscription": {
+            "status": "active",
+            "paid": true
+          },
+          "payments": [
+            {
+              "id": "pay-1",
+              "invoice_id": "inv-1",
+              "amount_cents": 4900,
+              "status": "captured"
+            },
+            {
+              "id": "pay-2",
+              "invoice_id": "inv-1",
+              "amount_cents": 4900,
+              "status": "captured"
+            }
+          ],
+          "refunds": [],
+          "members": []
+        }
+      },
+      "operations": {},
+      "journal": [],
+      "faults_seen": []
+    },
+    "objective": {
+      "account_id": "fern",
+      "kind": "member",
+      "email": "alex@example.test",
+      "role": "member"
+    },
+    "fault": "provision_timeout_after_commit"
+  }
+]

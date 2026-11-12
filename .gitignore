@@ -1,0 +1,8 @@
+.venv/
+.env
+.env.*
+.pending-code/
+__marimo__/
+__pycache__/
+wandb/
+*.log
