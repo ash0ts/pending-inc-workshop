@@ -4,6 +4,8 @@ Your manager has hired an autonomous employee for billing and onboarding. You su
 
 Build the employee in a Forge Notebook, run its tools in Sandboxes, and inspect each completed attempt in Agent Lens. Compare the original and revised harnesses on fresh cases before deciding what to keep. The company, accounts and payments are fictional; the code and execution records are real.
 
+[Workshop slides (PDF)](https://github.com/ash0ts/pending-inc-workshop/releases/download/workshop-2026-11-12/pending-harness2-workshop.pdf) · [All downloads, including the interactive deck](https://github.com/ash0ts/pending-inc-workshop/releases/tag/workshop-2026-11-12) · [Setup guide](hosted-setup.md)
+
 [Open the code map](code-map.md) for the harness, office simulator, instrumentation and improvement controller. The notebook also has an **Office Lab source** viewer. You can read the implementation without a gateway connection.
 
 ## Run the notebook
