@@ -1283,7 +1283,10 @@ def _(conclusion):
             ),
         ]
         report.save()
-        return {"url": report.url}
+        url = report.url
+        if url.startswith(f"https://forge.coreweave.com/{project}/"):
+            url = url.replace("https://forge.coreweave.com/", "https://forge.coreweave.com/wandb/", 1)
+        return {"url": url}
     return (write_report,)
 
 

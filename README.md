@@ -4,6 +4,8 @@ Build the employee, instrument it, then build the agent that edits its harness.
 
 ## Run the notebook
 
+[Open the Forge notebook](https://forge.coreweave.com/notebooks/Tm90ZWJvb2s6MTIzODU=) or use the checkout below. Duplicate one working copy per pair; use Edit mode.
+
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/). These commands are the same in macOS/Linux terminals and Windows PowerShell:
 
 ```sh
@@ -48,4 +50,6 @@ Local tool, message-handoff, timeout and scorer exercises require no provider co
 
 ## Preview and access
 
-See `preview/` for captured notebook screens and the captioned tour when present. The first technical rehearsal completed two refinement rounds and all twelve final evaluations. A follow-up with the current starter confirmed invoice-tool use, then exhausted both composition attempts. Both outcomes are retained; the complete replay uses the earlier starter. Native EvalTables publication is currently blocked by an HTTP 500 from its service; Weave publication and Agent Lens readback succeeded. Attendee-account permissions, native Windows/Linux execution, 25-pair live timing and a rehearsal with two human learners remain release checks; they are not implied by a passing test suite.
+![The office and code exercises](preview/office.png)
+
+[Watch the captioned walkthrough](preview/pending-code.mp4) · [Captions](preview/pending-code.vtt). The recording separates the complete earlier rehearsal from the current starter's incomplete tool-use check. The first technical rehearsal completed two refinement rounds and all twelve final evaluations. A follow-up with the current starter confirmed invoice-tool use, then exhausted both composition attempts. Both outcomes are retained; the complete replay uses the earlier starter. Native EvalTables publication is currently blocked by an HTTP 500 from its service; Weave publication and Agent Lens readback succeeded. Setup and notebook initialization passed CI on macOS, Windows and Linux. Attendee-account permissions, the duplicated hosted runtime, 25-pair live timing and a rehearsal with two human learners remain release checks; they are not implied by a passing test suite.
