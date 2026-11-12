@@ -34,7 +34,7 @@ class Journal:
 
     def get(self, key, default=None):
         p = self.path(key)
-        return json.loads(p.read_text()) if p.exists() else default
+        return json.loads(p.read_text(encoding="utf-8")) if p.exists() else default
 
     def put(self, key, value):
         encoded = json.dumps(value, ensure_ascii=False, indent=2)
@@ -44,7 +44,7 @@ class Journal:
                 raise ValueError("Refusing to save a credential in a notebook receipt")
         fd, name = tempfile.mkstemp(dir=self.root, suffix=".tmp")
         try:
-            with os.fdopen(fd, "w") as f:
+            with os.fdopen(fd, "w", encoding="utf-8") as f:
                 f.write(encoded)
             os.replace(name, self.path(key))
         finally:

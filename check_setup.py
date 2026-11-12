@@ -9,11 +9,11 @@ from pathlib import Path
 from office_lab.code_first import support
 from office_lab.code_first.solutions import ANSWERS
 
-ast.parse(Path("office_notebook.py").read_text())
+ast.parse(Path("office_notebook.py").read_text(encoding="utf-8"))
 namespace = {"json": json}
 exec(ANSWERS["invoice"], namespace)
 exec(ANSWERS["dispatch"], namespace)
-public = json.loads(Path("assets/office-development.json").read_text())
+public = json.loads(Path("assets/office-development.json").read_text(encoding="utf-8"))
 assert all(row["passed"] for row in support.tool_checks(namespace["lookup_invoice"], public))
 assert support.loop_checks(namespace["dispatch_tool"], namespace["append_observation"])
 print(
