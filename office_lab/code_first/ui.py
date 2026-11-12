@@ -189,6 +189,77 @@ def billing_status(snapshot):
     )
 
 
+def timeout_status(actions, compared=False):
+    read = next((a for a in actions if a["name"] == "onboarding_status"), None)
+    stage = 3 if read and compared else 2 if read else 1 if actions else 0
+    steps = []
+    for i, title in enumerate(["Request access", "Check actual access", "Compare two retries"]):
+        status = "Done" if i < stage else "Now" if i == stage else "Next"
+        steps.append(
+            f'<li class="pending-{status.lower()}"><small>{status}</small>{i + 1}. {title}</li>'
+        )
+    if not actions:
+        text = "Start by asking the office tool to add Alex. Before you click, predict what a timeout would tell you about whether the work happened."
+    elif not read:
+        output = actions[-1]["output"]
+        text = (
+            "<strong>Tool response: timeout.</strong> No acknowledgement arrived. "
+            "That alone does not tell you whether Alex was added. "
+            "Use the next button to read the account before sending another write."
+            "<p><em>IT has confirmed that confirmation is unavailable.</em></p>"
+            if output.get("error") == "timeout"
+            else "Tool response: " + html.escape(json.dumps(output)) + ". Check the account next."
+        )
+    else:
+        output = read["output"]
+        count = sum(
+            m == {"email": "alex@example.test", "role": "member"} for m in output.get("members", [])
+        )
+        if not output.get("ok"):
+            text = "The access check failed: " + html.escape(json.dumps(output))
+        elif count == 1:
+            text = "<strong>Alex has access: one member record.</strong> The request committed before its acknowledgement timed out. No second write is needed. <p><em>The door opened. The confirmation email is still in a meeting.</em></p>"
+        else:
+            text = f"<strong>Access check: {count} matching member records.</strong> The request requires exactly one."
+    return (
+        '<div class="pending-workbench"><ol class="pending-stepper">'
+        + "".join(steps)
+        + '</ol><div class="forge-checkpoint" role="status">'
+        + text
+        + "</div></div>"
+    )
+
+
+def timeout_comparison(branches):
+    from office_lab import practice
+
+    rows = []
+    for key, title in [("same", "Retry the same request"), ("new", "Send a new request")]:
+        if key not in branches:
+            continue
+        events = practice.attempt_actions(branches[key], "missing-seat")
+        write, read = events[-2:]
+        output = read["output"]
+        count = sum(
+            m == {"email": "alex@example.test", "role": "member"} for m in output.get("members", [])
+        )
+        result = (
+            "Saved receipt returned; no extra write"
+            if write["output"].get("replayed")
+            else "A new write was recorded"
+            if write["output"].get("ok")
+            else "Write failed: " + str(write["output"].get("error"))
+        )
+        rows.append(
+            {
+                "Retry": title,
+                "Tool response": result,
+                "Alex’s member records": count if output.get("ok") else None,
+            }
+        )
+    return rows
+
+
 def publication_summary(publications, comparison):
     if comparison.get("url"):
         heading = (
