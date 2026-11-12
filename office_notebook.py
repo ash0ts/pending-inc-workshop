@@ -129,17 +129,19 @@ def _(GATEWAY_DEFAULTS, dt, mo, os, support):
 
 
 @app.cell(hide_code=True)
-def _(Client, connection_form, flow, get_connection, mo, set_connection, set_outputs, set_progress, set_receipts, support):
+def _(Client, connection_form, flow, mo, set_connection, set_outputs, set_progress, set_receipts, support):
     mo.stop(connection_form.value is None)
     try:
         _values = connection_form.value
         _client = Client(_values["gateway"], _values["token"], access_token=_values["access_token"] or None)
         _doctor = support.doctor(_client, _values["project"])
         _journal = support.Journal(".pending-code/journal", [_doctor["gateway"]["team"], _values["project"]])
+        _connected = {"client": _client, "project": _values["project"], "scope_id": _doctor["scope_id"], "journal": _journal}
+        _progress = flow.refresh(_connected)
         set_outputs({})
         set_receipts({})
-        set_connection({"client": _client, "project": _values["project"], "scope_id": _doctor["scope_id"], "journal": _journal})
-        set_progress(flow.refresh(get_connection()))
+        set_connection(_connected)
+        set_progress(_progress)
         mo.output.replace(mo.md("**Connected.** Next, click **Send my first Forge trace** below."))
     except Exception as _error:
         mo.output.replace(mo.callout(str(_error), kind="danger"))
@@ -162,7 +164,6 @@ def _(dt, fingerprint, flow, get_connection, get_outputs, mo, set_connection, se
     _ctx = get_connection()
     mo.stop(_ctx is None, mo.md("Connect to your project first."))
     _session = tracing.init(_ctx["project"], service_name="pending-notebook", autopatch_integrations=False)
-    set_connection({**_ctx, "session": _session})
     _key = ["setup-trace", _ctx["project"]]
     _saved = _ctx["journal"].get(_key)
     if not _saved:
@@ -175,11 +176,13 @@ def _(dt, fingerprint, flow, get_connection, get_outputs, mo, set_connection, se
                     _saved = _ctx["journal"].put(_key, span_identity())
     _session.force_flush()
     _rows = support.stored_spans(_ctx["project"], _saved["trace_id"], 2)
+    _ready = {**_ctx, "session": _session}
+    set_connection(_ready)
     try:
         _evaluation_access = support.check_evaluation_access(_ctx["project"], _ctx["scope_id"], _ctx["journal"])
     except Exception as _access_error:
         _evaluation_access = {"write_access": False, "error": str(_access_error), "next_step": "Continue the exercises. If native EvalTables remains unavailable, use the notebook comparison and saved Weave evaluations. Retry publication without rerunning inference."}
-    set_progress(flow.refresh(get_connection()))
+    set_progress(flow.refresh(_ready))
     _url = f"https://forge.coreweave.com/agent-lens/{_ctx['project']}/conversations/setup-" + fingerprint([_ctx["project"], _ctx["journal"].root.name])[:20]
     set_outputs({**get_outputs(), "setup_trace": mo.vstack([mo.md(f"[Open my setup conversation]({_url})"), mo.Html(ui.receipt({"stored_spans": len(_rows), "evaluation_access": _evaluation_access, "project": _ctx["project"], **_saved}))])})
     return
