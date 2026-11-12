@@ -1,6 +1,10 @@
 # Please Improve Yourself
 
-Build the employee, instrument it, then build the agent that edits its harness.
+Your manager has hired an autonomous employee for billing and onboarding. You supply its instructions, tools and checks. Then your manager asks whether an agent could improve those too.
+
+Build the employee in a Forge Notebook, run its tools in Sandboxes, and inspect each completed attempt in Agent Lens. Compare the original and revised harnesses on fresh cases before deciding what to keep. The company, accounts and payments are fictional; the code and execution records are real.
+
+[Open the code map](code-map.md) for the harness, office simulator, instrumentation and improvement controller. The notebook also has an **Office Lab source** viewer. You can read the implementation without a gateway connection.
 
 ## Run the notebook
 
@@ -31,9 +35,9 @@ The gateway controls model quota and remote Sandboxes. Your own Forge credential
 ## What you will change
 
 1. Write `lookup_invoice` and its input schema. Test the same invoice on two accounts.
-2. Complete tool dispatch and append the returned observation to the next request.
-3. Register the tested source. The runtime freezes when the original execution opens.
-4. Add Forge tool spans; compare stored spans with independently saved requests/events.
+2. Add a Forge tool span before the first model run. The Sandbox test exports its real lookup calls to Agent Lens.
+3. Complete dispatch and append the returned observation to the next request. Register the tested source; the runtime freezes when the original execution opens.
+4. Follow the original, manual and candidate attempts through Agent Lens. Compare stored spans with independently saved requests/events.
 5. Write a state scorer and a structured explanation judge; publish development EvalTables.
 6. Edit one harness procedure, then implement two candidate probes and composition.
 7. Carry a cited lesson into onboarding; freeze and compare three versions on four fresh cases.
@@ -56,7 +60,9 @@ Local tool, message-handoff, timeout and scorer exercises require no provider co
 
 [Watch the earlier captioned walkthrough](preview/pending-code.mp4) · [Captions](preview/pending-code.vtt). It records the previous release; its results are historical.
 
-The current browser rehearsal completed both improvement rounds, all twelve fresh executions and all twelve explanation judgments. All three versions passed four state checks; both compositions retained the manual harness. No quality gain is claimed. [Browser check summary](browser-validation.json).
+The earlier full browser rehearsal completed both improvement rounds, all twelve fresh executions and all twelve explanation judgments. All three versions passed four state checks; both compositions retained the manual harness. No quality gain is claimed. [Browser check summary](browser-validation.json).
+
+This teaching revision moves instrumentation earlier and adds recurring Forge checkpoints and a source viewer. Desktop/mobile free exercises and source controls were checked separately. Saved Sandbox and original-run spans were verified without repeating model inference. Existing working copies are not overwritten by a template update; save your edits and journal before updating.
 
 Native EvalTables publication remains unavailable (HTTP 500). The notebook shows the saved Weave evaluations, W&B artifacts and Report so publication failure does not strand your work. Agent Lens conversations and tool spans were checked in Chrome.
 

@@ -279,6 +279,35 @@ def capture_trace(audit, project, session, instrument, journal, *, version=None)
     return journal.put(key, {**old, **verified, "span_links": links})
 
 
+def export_completed_traces(context, code, runs):
+    """Export saved executions; a telemetry failure must not hide completed work."""
+    outcomes = []
+    for run in runs:
+        item = {"execution": run["id"], "stage": run["stage"], "title": run["title"]}
+        if not run.get("ended"):
+            outcomes.append({**item, "status": "running"})
+            continue
+        try:
+            if "session" not in context:
+                raise ValueError("Click Send my first Forge trace to initialize your project.")
+            if "instrument" not in code:
+                raise ValueError("Run the free instrumentation cells first.")
+            audit = context["client"].audit(run["id"])
+            trace = capture_trace(
+                audit,
+                context["project"],
+                context["session"],
+                code["instrument"],
+                context["journal"],
+                version=code["instrumentation_version"],
+            )
+            context["journal"].put("trace/" + run["id"], trace)
+            outcomes.append({**item, **trace, "status": "verified"})
+        except Exception as error:
+            outcomes.append({**item, "status": "export_pending", "error": str(error)})
+    return outcomes
+
+
 def tool_checks(lookup, development):
     import copy
 
