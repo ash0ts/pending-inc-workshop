@@ -16,6 +16,16 @@ from office_lab.harness import fingerprint
 CAMPAIGN = "pending-v4-code-r2"
 
 
+def default_project():
+    explicit = os.getenv("WANDB_PROJECT_PATH")
+    if explicit:
+        return explicit
+    entity, project = os.getenv("WANDB_ENTITY"), os.getenv("WANDB_PROJECT")
+    if entity and project:
+        return f"{entity}/{project}"
+    return ""
+
+
 def source(function):
     return textwrap.dedent(inspect.getsource(function)).strip()
 

@@ -4,7 +4,7 @@ Build the employee, instrument it, then build the agent that edits its harness.
 
 ## Run the notebook
 
-[Open the Forge notebook](https://forge.coreweave.com/notebooks/Tm90ZWJvb2s6MTIzODU=) or use the checkout below. Duplicate one working copy per pair; use Edit mode.
+[Open the Forge notebook](https://forge.coreweave.com/notebooks/Tm90ZWJvb2s6MTU2ODc=) or use the checkout below. Use **Copy to project** to make one working copy per pair in a project you can write, then open **Edit**. Your destination team must have hosted Notebook/Sandbox access. The public template does not grant that entitlement. [Complete setup](hosted-setup.md).
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/). These commands are the same in macOS/Linux terminals and Windows PowerShell:
 
@@ -22,7 +22,9 @@ Open in **Edit** mode. If only text and inactive code appear, use the bottom-rig
 
 ## Connect
 
-Authenticate with `uv run wandb login` on your laptop. In Forge Notebooks, use a WANDB_API_KEY hosted secret instead. Enter your own `entity/project`, the facilitator's **code-first** gateway URL and your pair token in the setup form. For a Forge-hosted gateway, also enter the facilitator's gateway access token; leave that field blank for localhost. These credentials belong in the password fields or hosted secrets, never in source cells or saved output.
+In Forge, copy the notebook into a project you can write. The runtime supplies credentials and the notebook fills in that project's `team/project` value. The hosted workshop gateway address is also prefilled for its advertised time window. Paste the pair token and gateway access token supplied by your host into the password fields, then click **Check connection**. No personal API key is needed for the normal hosted path.
+
+On a laptop, authenticate with `uv run wandb login`. Never put credentials in source cells or saved outputs. If your account cannot read the template or launch a notebook, ask the host to check access before the workshop.
 
 The gateway controls model quota and remote Sandboxes. Your own Forge credentials publish your traces and evaluation rows. Setup checks project read access; the setup trace checks trace readback and evaluation write access. Do not use the operator repository: it contains private grading material.
 
@@ -58,6 +60,6 @@ The current browser rehearsal completed both improvement rounds, all twelve fres
 
 Native EvalTables publication remains unavailable (HTTP 500). The notebook shows the saved Weave evaluations, W&B artifacts and Report so publication failure does not strand your work. Agent Lens conversations and tool spans were checked in Chrome.
 
-The shared gateway is intended for an operator-owned Forge Sandbox with native HTTPS access control; that endpoint mechanism was tested, but the full gateway migration remains open. There is no Cloudflare tunnel. A facilitator can run the gateway and notebook together on localhost. Attendee-account access, the duplicated hosted runtime, 25-pair timing and a human learning rehearsal remain release checks.
+The shared gateway runs in an operator-owned CoreWeave Sandbox with protected HTTPS and a fixed lifetime shown in the notebook. State backups are private. The notebook includes a case-by-case score table and saved Weave links when native EvalTables is unavailable. Access from an external attendee account, 25-pair timing and a human learning rehearsal are separate release checks.
 
 ![The invoice tool in Agent Lens](preview/24-native-agent-lens.png)
