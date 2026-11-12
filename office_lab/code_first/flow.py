@@ -1,7 +1,11 @@
 """Read saved progress to explain the next action. Never execute a workshop stage."""
 
 PHASES = [
-    ("propose", "Propose two changes", "Ask the editor for two competing harness changes."),
+    (
+        "propose",
+        "Ask the editor for two harness changes",
+        "Ask the editor for two competing harness changes.",
+    ),
     (
         "probe_a",
         "Test candidate A",
@@ -14,7 +18,7 @@ PHASES = [
     ),
     (
         "compose",
-        "Choose or combine the changes",
+        "Ask the editor to select or combine changes",
         "Ask the editor to compare both probes and save a CHANGE or KEEP decision.",
     ),
     (
@@ -24,7 +28,7 @@ PHASES = [
     ),
     (
         "reflect",
-        "Save a lesson from the test",
+        "Ask the editor to save a lesson",
         "Ask the editor what the execution supports and where that lesson may not apply.",
     ),
 ]
@@ -66,16 +70,16 @@ def phase_done(snapshot, number, phase):
 def improvement_step(snapshot):
     if not completed(snapshot, "manual"):
         return {
-            "blocked": "Finish your manual test first.",
+            "blocked": "Run the billing case with your edited harness first.",
             "anchor": "manual",
-            "label": "Waiting for your manual test",
+            "label": "Waiting for your edited-harness billing run",
         }
     for number in [1, 2]:
         if number == 2 and not completed(snapshot, "r2_start"):
             return {
                 "round": 2,
                 "phase": "start",
-                "label": "Try the adopted harness on onboarding",
+                "label": "Run the selected harness on onboarding",
                 "description": "Run the billing harness on the onboarding case. Its new trace becomes round two’s starting evidence.",
             }
         for phase, label, description in PHASES:
@@ -169,11 +173,11 @@ def blocked(action, progress):
     if action not in live:
         return None
     if not progress.get("connected"):
-        return {"text": "Connect to your project in Clock in.", "anchor": "setup"}
+        return {"text": "Connect to your project in the first chapter.", "anchor": "setup"}
     if action == "setup_trace":
         return None
     if not progress.get("tracing"):
-        return {"text": "Send your first Forge trace in Clock in.", "anchor": "setup"}
+        return {"text": "Click Send my first Forge trace in the first chapter.", "anchor": "setup"}
     snapshot = progress.get("snapshot", {})
     if action in {"step_employee", "finish_employee"} and not progress.get("registered"):
         return {"text": "Register and test your code in a Sandbox above.", "anchor": "loop"}
@@ -183,7 +187,10 @@ def blocked(action, progress):
         "publish_original",
         "run_manual",
     } and not completed(snapshot, "original"):
-        return {"text": "Let the original employee finish its ticket first.", "anchor": "loop"}
+        return {
+            "text": "Use Continue this billing run until it stops in the billing chapter first.",
+            "anchor": "loop",
+        }
     if action == "export_sandbox" and not progress.get("registration_saved"):
         return {
             "text": "Register and test your tool above to create its execution record.",
@@ -191,13 +198,16 @@ def blocked(action, progress):
         }
     if action == "publish_original" and not progress.get("judge_original"):
         return {
-            "text": "Run your development explanation judge above. An unavailable judgment can still be published as missing.",
+            "text": "Click Ask the judge to assess the billing explanation above. An unavailable judgment can still be published as missing.",
             "anchor": "evals",
         }
     if action in {"publish_manual", "improvement_step", "inspect_branches"} and not completed(
         snapshot, "manual"
     ):
-        return {"text": "Save your edit and finish its matched test first.", "anchor": "manual"}
+        return {
+            "text": "Save your harness edit and rerun the billing case first.",
+            "anchor": "manual",
+        }
     if action == "freeze_runtime" and not improvement_step(snapshot).get("complete"):
         return {"text": "Complete both guided improvement rounds first.", "anchor": "improve"}
     if action == "final_runs" and not snapshot.get("freeze"):
@@ -217,13 +227,14 @@ def evidence_rows(snapshot):
         return []
     import json
 
+    from office_lab import visuals
+
     return [
         {
             "Step": i + 1,
-            "Tool": e["name"],
+            "Tool": visuals.tool_label(e["name"]),
             "Arguments": json.dumps(e["arguments"]),
-            "Result": e["output"].get("error")
-            or ("Succeeded" if e["output"].get("ok") else "Returned"),
+            "Result": visuals.tool_result(e),
             "event_id": e["id"],
         }
         for i, e in enumerate(run.get("events", []))
@@ -251,8 +262,8 @@ def manual_ready(snapshot, selection, hypothesis, expected):
 
 def freeze_options(snapshot):
     labels = {
-        "r2_composed": "After onboarding · round two",
-        "r1_composed": "After billing · round one",
-        "manual": "Your manual edit",
+        "r2_composed": "Selected after onboarding · round two",
+        "r1_composed": "Selected after billing · round one",
+        "manual": "Your edited harness",
     }
     return {label: stage for stage, label in labels.items() if completed(snapshot, stage)}

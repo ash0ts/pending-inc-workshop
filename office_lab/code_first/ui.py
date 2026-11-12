@@ -3,20 +3,32 @@
 import html
 import json
 
+from office_lab import visuals
+
 CHAPTERS = [
-    ("setup", "0–10", "Clock in", "Send your first trace"),
-    ("tools", "10–35", "Equipment was not included", "Build and instrument the invoice tool"),
-    ("loop", "35–55", "Please acknowledge reality", "Connect action to observation"),
-    ("traces", "55–80", "The receipt says otherwise", "Investigate the employee"),
-    ("evals", "80–105", "Stop marking your own homework", "Write checks and a judge"),
-    ("manual", "115–130", "The handbook has a new paragraph", "Test your manual edit"),
+    ("setup", "0–10", "Clock in. IT would like proof.", "Connect Forge and send a test trace"),
+    ("tools", "10–35", "Equipment was not included.", "Build and trace the invoice lookup tool"),
+    ("loop", "35–55", "Please acknowledge reality.", "Run the billing agent, one action at a time"),
+    ("traces", "55–80", "The receipt says otherwise.", "Inspect tool calls and timeout recovery"),
+    (
+        "evals",
+        "80–105",
+        "Stop marking your own homework.",
+        "Check the refund and judge the explanation",
+    ),
+    (
+        "manual",
+        "115–130",
+        "The handbook has a new paragraph.",
+        "Edit the harness and rerun the billing case",
+    ),
     (
         "improve",
         "130–160",
-        "Management would like to automate management",
-        "Build Propose → Probe → Compose",
+        "Management would like to automate management.",
+        "Use an editor agent to propose and test changes",
     ),
-    ("final", "160–180", "Monday, again", "Compare on fresh cases"),
+    ("final", "160–180", "Monday, again.", "Compare three harnesses on four fresh cases"),
 ]
 
 FORGE_CHECKPOINTS = {
@@ -30,7 +42,7 @@ FORGE_CHECKPOINTS = {
     ),
     "loop": (
         "Agent Lens",
-        "Finish the ticket, then open its conversation below the result. Find the lookup and the next model request. Does that request include the returned invoice?",
+        "Let the billing run end, then open its conversation below the result. Find the lookup and the next model request. Does that request include the returned invoice?",
     ),
     "traces": (
         "Agent Lens",
@@ -50,15 +62,15 @@ FORGE_CHECKPOINTS = {
     ),
     "final": (
         "EvalTables + W&B Artifacts",
-        "Compare the same case across original, manual and frozen harnesses. Open a score's trace and the versioned files before explaining the difference.",
+        "Compare the starting harness, your edit, and the frozen selected harness on the same case. Open a score's trace and the versioned files before explaining the difference.",
     ),
 }
 
 
 def heading(key, task, verify):
     _, minutes, title, subtitle = next(c for c in CHAPTERS if c[0] == key)
-    return f'''<section class="quest" id="{key}"><div class="quest-time">{minutes} MIN · {html.escape(subtitle)}</div>
-<h2>{html.escape(title)}</h2><p><b>Your task.</b> {html.escape(task)}</p>
+    return f'''<section class="quest" id="{key}"><div class="quest-time">{minutes} MIN</div>
+<h2>{html.escape(subtitle)}</h2><p class="quest-aside">{html.escape(title)}</p><p><b>Your task.</b> {html.escape(task)}</p>
 <p class="verify"><b>Check your work.</b> {html.escape(verify)}</p></section>'''
 
 
@@ -69,7 +81,7 @@ def forge_checkpoint(key, project=None):
         + html.escape(project, quote=True)
         + '/conversations">Open my Agent Lens project ↗</a>'
         if project
-        else "<span>Connect in Clock in for your project link.</span>"
+        else "<span>Connect in the first chapter for your project link.</span>"
     )
     return (
         '<aside class="forge-checkpoint"><strong>'
@@ -85,7 +97,7 @@ def forge_checkpoint(key, project=None):
 def trace_results(outcomes):
     cards = []
     for item in outcomes:
-        label = html.escape(item["stage"] + " / " + item["title"])
+        label = html.escape(visuals.stage_label(item["stage"]) + " · " + item["title"])
         if item["status"] == "verified":
             detail = (
                 f"{item['model_spans']} model calls · {item['tool_spans']} tool calls · stored spans verified"
@@ -94,7 +106,7 @@ def trace_results(outcomes):
                 + '">Open this Agent Lens conversation ↗</a>'
             )
         elif item["status"] == "running":
-            detail = "This execution is still running. Its events are saved; the full conversation is exported when it finishes."
+            detail = "This run has not ended. Its calls are saved below. Continue it in the notebook; the full conversation exports when the run ends."
         else:
             detail = (
                 "Execution saved; trace export needs attention. "
@@ -122,7 +134,7 @@ def floor():
 
 CSS = """<style>
 :root{--pending-ink:#192938;--pending-accent:#146c65;--pending-paper:#f7f2e8;}
-.quest{border-top:3px solid var(--pending-ink);padding:24px 0 12px;margin-top:30px}.quest h2{font-size:27px;letter-spacing:-.5px;line-height:1.2;margin:8px 0 14px}.quest-time{font:700 12px ui-monospace,monospace;color:var(--pending-accent);letter-spacing:1px}.quest p{line-height:1.6;max-width:760px}.verify{border-left:3px solid #dcae4e;padding-left:14px}
+.quest{border-top:3px solid var(--pending-ink);padding:24px 0 12px;margin-top:30px}.quest h2{font-size:27px;letter-spacing:-.5px;line-height:1.2;margin:8px 0 14px}.quest-time{font:700 12px ui-monospace,monospace;color:var(--pending-accent);letter-spacing:1px}.quest-aside{font-style:italic;opacity:.85}.quest p{line-height:1.6;max-width:760px}.verify{border-left:3px solid #dcae4e;padding-left:14px}
 .office-floor{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:18px;background:repeating-conic-gradient(#ebe5d9 0 25%,#f4efe5 0 50%) 0/24px 24px;border:3px solid #192938;box-shadow:5px 5px 0 #c7bda8}.desk{display:flex;flex-direction:column;min-height:118px;background:#fffaf1;border:2px solid #736b5f;padding:12px;color:#192938!important;text-decoration:none!important;box-shadow:3px 3px 0 #c7bda8}.desk:focus,.desk:hover{outline:3px solid #146c65;outline-offset:2px}.desk strong{font-size:13px;line-height:1.4}.desk small{color:#685f50;margin-top:auto}.person{font-size:24px;color:#146c65;line-height:1;margin-bottom:8px}.receipt{border:1px solid #c7c8ce;border-radius:6px;padding:14px}.receipt pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}.pending-banner{font:700 13px ui-monospace,monospace;letter-spacing:1px;color:#146c65}
 @media(max-width:700px){.office-floor{grid-template-columns:repeat(2,1fr)}.quest h2{font-size:23px}}
 .pixel-desk{width:96px;height:64px;shape-rendering:crispEdges;margin-bottom:8px}.desk{min-height:160px}
@@ -143,15 +155,38 @@ def receipt(value):
 def event_table(run):
     return [
         {
-            "Step": i,
-            "Action": e["name"],
+            "Step": i + 1,
+            "Action": visuals.tool_label(e["name"]),
             "Arguments": json.dumps(e["arguments"]),
-            "Result": e["output"].get("error")
-            or ("accepted" if e["output"].get("accepted") else "returned"),
+            "Result": visuals.tool_result(e),
             "Event": e["id"],
         }
         for i, e in enumerate(run.get("events", []))
     ]
+
+
+def billing_status(snapshot):
+    from office_lab.code_first import flow
+
+    run = flow.stage_run(snapshot, "original")
+    if not run:
+        text = "No billing run yet. Run one model action to inspect the handoff, or let the agent continue until it stops. Both controls use the starting harness."
+    elif run.get("ended"):
+        text = (
+            "This billing run has ended. Saved status: "
+            + html.escape(run["status"])
+            + ". The controls below will not start another run. "
+            + '<a href="#evals">Continue to the state checks and explanation judge ↓</a>.'
+        )
+    else:
+        count = len(run.get("events", []))
+        calls = "tool call" if count == 1 else "tool calls"
+        text = f"{count} {calls} saved in this billing run. The next action continues from that state; it does not reset the account."
+    return (
+        '<div class="forge-checkpoint" role="status"><strong>Starting harness · Billing case</strong><p>'
+        + text
+        + "</p></div>"
+    )
 
 
 def publication_summary(publications, comparison):
@@ -330,7 +365,7 @@ def event_summary(event):
     if output.get("error"):
         result = "Reported error: " + json.dumps(output["error"], ensure_ascii=False)
     else:
-        result = "Tool reported success" if output.get("ok") is True else "Tool returned a response"
+        result = visuals.tool_result(event)
         lists = [
             f"{name}: {len(value)} records"
             for name, value in output.items()

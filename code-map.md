@@ -28,8 +28,8 @@ The files above are public teaching code. The participant repository excludes he
 
 ## Keep Forge beside the notebook
 
-In **Clock in**, send the environment trace and open it in Agent Lens. While building the invoice tool, implement its span. Registration then exports the real Sandbox test, before any employee model call. When the original, manual or candidate run finishes, its result offers a verified conversation link.
+In the first chapter, send the environment trace and open it in Agent Lens. While building the invoice tool, implement its span. Registration then exports the real Sandbox test, before any employee model call. When the original, manual or candidate run finishes, its result offers a verified conversation link.
 
 For each attempt, find one tool call and read what the model did next. During evaluation, follow a result back to that conversation and its executed harness. A tool error and an incorrect account state are different observations.
 
-Export failures do not discard the execution. Repair the instrumentation and use **Export / verify my Sandbox tool test**, **Export / verify my original execution**, or **Retry trace exports for saved branches**. These actions export saved work without repeating inference.
+Export failures do not discard the execution. Repair the instrumentation and use **Retry Agent Lens export for the Sandbox tool test**, **Retry Agent Lens export for the starting billing run**, or **Retry trace exports for saved branches**. These actions export saved work without repeating inference.

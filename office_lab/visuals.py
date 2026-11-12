@@ -6,26 +6,53 @@ import json
 
 def stage_label(stage):
     labels = {
-        "original": "Original employee",
-        "manual": "Your revision",
-        "repeat_original": "Original repeated",
-        "r2_start": "Next task with adopted harness",
+        "original": "Starting harness",
+        "manual": "Your edited harness",
+        "repeat_original": "Starting harness / repeat run",
+        "tool_test": "Sandbox test / invoice lookup",
+        "r2_start": "Round 2 / Test the selected billing harness on onboarding",
         "mcp_practice": "MCP connection practice",
-        "eval_original": "Fresh case / Original",
-        "eval_manual": "Fresh case / Manual",
-        "eval_frozen": "Fresh case / RSI",
+        "eval_original": "Fresh case / Starting harness",
+        "eval_manual": "Fresh case / Your edited harness",
+        "eval_frozen": "Fresh case / Frozen selected harness",
     }
     if stage in labels:
         return labels[stage]
     parts = stage.split("_")
+    if len(parts) < 2 or parts[0] not in {"r1", "r2"}:
+        return stage
     return f"Round {parts[0][1:]} / " + {
-        "a": "Candidate A",
-        "b": "Candidate B",
-        "composed": "Composition",
-        "propose": "Proposal session",
-        "compose": "Composition decision",
-        "reflect": "Reflection",
+        "a": "Test candidate A",
+        "b": "Test candidate B",
+        "composed": "Test the selected harness",
+        "propose": "Editor proposes two changes",
+        "compose": "Editor selects or combines changes",
+        "reflect": "Editor saves a lesson",
     }.get(parts[-1], parts[-1])
+
+
+def tool_label(name):
+    label = {
+        "lookup_invoice": "Look up invoice",
+        "get_account": "Read account",
+        "list_payments": "Read payments and refunds",
+        "refund_payment": "Issue refund",
+        "onboarding_status": "Read account access",
+        "provision_member": "Grant account access",
+        "read_skill": "Load a skill",
+        "check_work": "Run the development check",
+        "finish": "Submit final response",
+    }.get(name)
+    return f"{label} ({name})" if label else name
+
+
+def tool_result(event):
+    output = event["output"]
+    if output.get("error"):
+        return output["error"]
+    if event["name"] == "finish" and output.get("accepted"):
+        return "Response recorded; correctness not graded here"
+    return "Tool returned successfully" if output.get("ok") else "Response returned"
 
 
 def account_rows(run):
@@ -75,7 +102,9 @@ def branch_diagram(snapshot, round_number=1, *, compact=False):
     runs = {r["stage"]: r for r in snapshot.get("runs", []) if not r["stage"].startswith("eval_")}
     lines = ["flowchart TB"]
     parent = "parent"
-    parent_title = "Manual harness" if n == 1 and snapshot.get("manual") else "Original harness"
+    parent_title = (
+        "Your edited harness" if n == 1 and snapshot.get("manual") else "Starting harness"
+    )
     if n == 2:
         if not snapshot.get("decisions", {}).get("r1_composed"):
             return 'flowchart TB\nwaiting["Round two has no saved decisions yet"]'
@@ -83,11 +112,15 @@ def branch_diagram(snapshot, round_number=1, *, compact=False):
     lines.append(f'parent["{parent_title}"]')
     start = "manual" if n == 1 else "r2_start"
     if start in runs:
-        title = "Manual probe" if n == 1 else "Same harness, onboarding task"
+        title = "Test of your edit" if n == 1 else "Same harness, onboarding task"
         shape = f'start_run("Execution<br/>{title}")' if compact else f'start_run(("{title}"))'
         lines += [shape, "parent -->|files executed| start_run"]
         parent = "start_run"
-    for branch, label in [("a", "Candidate A"), ("b", "Candidate B"), ("composed", "Composition")]:
+    for branch, label in [
+        ("a", "Candidate A"),
+        ("b", "Candidate B"),
+        ("composed", "Selected harness"),
+    ]:
         stage = f"r{n}_{branch}"
         d = snapshot.get("decisions", {}).get(stage)
         if not d:
