@@ -38,7 +38,7 @@ FORGE_CHECKPOINTS = {
     ),
     "tools": (
         "Forge SDK + Sandboxes",
-        "Write the lookup and its tool span here. Registration installs your code in a remote Sandbox. Its receipt identifies the source and the isolated office state.",
+        "Write the lookup and its tool span here. Register it with the gateway, then read the receipt: it identifies the executed source and whether tools ran in a CoreWeave Sandbox or the local fallback.",
     ),
     "loop": (
         "Agent Lens",
@@ -95,6 +95,8 @@ def forge_checkpoint(key, project=None):
 
 
 def trace_results(outcomes):
+    from .support import execution_note
+
     cards = []
     for item in outcomes:
         label = html.escape(visuals.stage_label(item["stage"]) + " · " + item["title"])
@@ -118,6 +120,8 @@ def trace_results(outcomes):
             + label
             + "</strong><p>"
             + detail
+            + "<br>"
+            + html.escape(execution_note(item.get("execution_mode")))
             + "</p></div>"
         )
     return "".join(cards) or "<p>No saved executions to export yet.</p>"

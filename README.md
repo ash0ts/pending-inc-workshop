@@ -30,12 +30,12 @@ In Forge, copy the notebook into a project you can write. The runtime supplies c
 
 On a laptop, authenticate with `uv run wandb login`. Never put credentials in source cells or saved outputs. If your account cannot read the template or launch a notebook, ask the host to check access before the workshop.
 
-The gateway controls model quota and remote Sandboxes. Your own Forge credentials publish your traces and evaluation rows. Setup checks project read access; the setup trace checks trace readback and evaluation write access. Do not use the operator repository: it contains private grading material.
+The gateway controls model quota and tool execution. Its connection receipt states whether it uses remote CoreWeave Sandboxes or the local fallback. Your own Forge credentials publish your traces and evaluation rows. Setup checks project read access; the setup trace checks trace readback and evaluation write access. Do not use the operator repository: it contains private grading material.
 
 ## What you will change
 
 1. Write `lookup_invoice` and its input schema. Test the same invoice on two accounts.
-2. Add a Forge tool span before the first model run. The Sandbox test exports its real lookup calls to Agent Lens.
+2. Add a Forge tool span before the first model run. The registered-tool test exports its real lookup calls to Agent Lens.
 3. Complete dispatch and append the returned observation to the next request. Register the tested source; the runtime freezes when the original execution opens.
 4. Follow the original, manual and candidate attempts through Agent Lens. Compare stored spans with independently saved requests/events.
 5. Write a state scorer and a structured explanation judge; publish development EvalTables.

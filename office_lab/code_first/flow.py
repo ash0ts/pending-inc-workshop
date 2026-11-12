@@ -180,7 +180,7 @@ def blocked(action, progress):
         return {"text": "Click Send my first Forge trace in the first chapter.", "anchor": "setup"}
     snapshot = progress.get("snapshot", {})
     if action in {"step_employee", "finish_employee"} and not progress.get("registered"):
-        return {"text": "Register and test your code in a Sandbox above.", "anchor": "loop"}
+        return {"text": "Register and test your tool with the gateway above.", "anchor": "loop"}
     if action in {
         "export_original",
         "judge_original",

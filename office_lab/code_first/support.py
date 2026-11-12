@@ -16,6 +16,28 @@ from office_lab.harness import fingerprint
 CAMPAIGN = "pending-v4-code-r2"
 
 
+def local_connection():
+    """Read an operator-issued loopback connection without embedding it in source."""
+    from urllib.parse import urlparse
+
+    file = os.getenv("OFFICE_LOCAL_ACCESS_FILE")
+    if not file:
+        return {}
+    value = json.loads(Path(file).read_text())
+    address = urlparse(value["gateway"])
+    if address.scheme != "http" or address.hostname not in {"127.0.0.1", "localhost", "::1"}:
+        raise ValueError("The local connection file must point to this machine's loopback address")
+    return {"gateway": value["gateway"], "token": value["token"]}
+
+
+def execution_note(mode):
+    if mode == "local-restricted-python":
+        return "Tools run locally on the gateway host. Your lookup runs in a restricted Python interpreter; onboarding uses stdio MCP. No CoreWeave tool Sandbox is created."
+    if mode == "coreweave-sandbox":
+        return "Tools run in a remote CoreWeave Sandbox, separate from this notebook."
+    return "Tool location was not reported by this gateway. Inspect the execution receipt."
+
+
 def default_project():
     explicit = os.getenv("WANDB_PROJECT_PATH")
     if explicit:
@@ -283,7 +305,12 @@ def export_completed_traces(context, code, runs):
     """Export saved executions; a telemetry failure must not hide completed work."""
     outcomes = []
     for run in runs:
-        item = {"execution": run["id"], "stage": run["stage"], "title": run["title"]}
+        item = {
+            "execution": run["id"],
+            "stage": run["stage"],
+            "title": run["title"],
+            "execution_mode": run.get("execution_mode"),
+        }
         if not run.get("ended"):
             outcomes.append({**item, "status": "running"})
             continue

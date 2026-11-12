@@ -33,6 +33,13 @@ class Client:
                 detail = result.json().get("detail", result.text)
             except ValueError:
                 detail = result.text
+            if result.status_code == 503 and "Permission denied: access denied" in str(detail):
+                detail = (
+                    str(detail)
+                    + ". The gateway could not access CoreWeave Sandboxes. Your saved work is retained. "
+                    "The host must restore access or provide the local-tool gateway. "
+                    "Do not rerun completed stages or change your Forge project to fix this."
+                )
             raise GatewayError(result.status_code, str(detail))
         return result.json()
 

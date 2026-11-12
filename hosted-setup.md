@@ -11,7 +11,7 @@ Participants need a Forge account with hosted Notebook/Sandbox access, a project
 3. Find **Connect Forge and send a test trace**. The project field should already contain the destination of your copy, in `team/project` form. The gateway URL is also filled in. Keep both values unless the facilitator supplies a correction.
 4. Paste the **attendee token** and **gateway access token** from your private access sheet into their password fields. Click **Check connection**. The receipt must show your attendee ID and `pending-v4-code-r2`.
 5. Click **Send my first Forge trace**, then **Open my setup conversation**. Confirm the tool event appears in Agent Lens. Forge provides the runtime credential automatically; do not paste an API key into notebook code.
-6. Continue to **Build and trace the invoice lookup tool**. Implement `lookup_invoice`, run its local checks, add its Forge tool span, complete the tool-observation handoff, and register the code in a Sandbox. Open the returned Agent Lens conversation before continuing to the employee’s first model run. The remaining chapters evaluate and improve that employee.
+6. Continue to **Build and trace the invoice lookup tool**. Implement `lookup_invoice`, run its local checks, add its Forge tool span, complete the tool-observation handoff, and register the code with the gateway. The receipt states whether the tools ran in a CoreWeave Sandbox or the local fallback. Open the returned Agent Lens conversation before continuing to the employee’s first model run. The remaining chapters evaluate and improve that employee.
 7. Save the notebook before leaving. Keep your copy's URL. Completed model executions are reused after reconnection; publication retries do not rerun the agent.
 
 The public template grants reading and copying access. It does **not** grant membership in W&B's internal team or the entitlement to launch a hosted runtime. If your own team cannot launch one, use the laptop path below with a writable Forge project and the same two workshop tokens.
@@ -44,7 +44,12 @@ Install [uv](https://docs.astral.sh/uv/getting-started/installation/) first. Use
 | Destination project is missing | Choose a project your account can write, or ask its team administrator for access. |
 | Hosted notebook cannot start | Check Notebook/Sandbox access in the destination team; use the laptop fallback if unavailable. |
 | Project is only `test-workshop` | Use `your-team/test-workshop`, not a URL. |
+| Permission denied from a Sandbox request | The host must restore Sandbox access or provide the local-tool gateway. Model-budget changes do not repair this. Preserve your saved executions. |
 | Gateway returns 401/403 | Check both workshop tokens. These are separate from Forge authentication. |
 | Gateway is unreachable | Check its lifetime and ask the host for status. Never use the host's `localhost` in a hosted notebook. |
 | Trace export stops | Retry export from the saved audit record. Do not rerun inference. |
 | Native EvalTables returns 500 | Use the notebook table and Weave links; retry publication later. |
+
+## When tool Sandboxes are unavailable
+
+The operator can select a local tool backend. Agent Lens, model calls, judging and comparisons still work, and each receipt identifies local execution. Use the endpoint the host provides. If the host runs the gateway on a laptop, the notebook must run on that same laptop for a loopback connection. This is different from merely installing marimo locally while keeping the unavailable hosted gateway.

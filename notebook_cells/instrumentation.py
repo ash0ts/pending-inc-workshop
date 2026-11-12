@@ -14,6 +14,7 @@ def instrument_execution(audit, project, save_receipt):
             "workshop.execution": run["id"],
             "workshop.harness": run["fingerprint"],
             "workshop.stage": run["stage"],
+            "workshop.tool_backend": run.get("execution_mode", "unknown"),
         },
     ):
         with tracing.Turn(
