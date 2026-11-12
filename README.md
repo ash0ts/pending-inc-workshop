@@ -4,7 +4,7 @@ Build the employee, instrument it, then build the agent that edits its harness.
 
 ## Run the notebook
 
-[Open the Forge notebook](https://forge.coreweave.com/notebooks/Tm90ZWJvb2s6MTU2ODc=) or use the checkout below. Use **Copy to project** to make one working copy per pair in a project you can write, then open **Edit**. Your destination team must have hosted Notebook/Sandbox access. The public template does not grant that entitlement. [Complete setup](hosted-setup.md).
+[Open the Forge notebook](https://forge.coreweave.com/notebooks/Tm90ZWJvb2s6MTU2ODc=) or use the checkout below. Use **Copy to project** to make your own working copy in a project you can write, then open **Edit**. Your destination team must have hosted Notebook/Sandbox access. The public template does not grant that entitlement. [Complete setup](hosted-setup.md).
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/). These commands are the same in macOS/Linux terminals and Windows PowerShell:
 
@@ -22,7 +22,7 @@ Open in **Edit** mode. If only text and inactive code appear, use the bottom-rig
 
 ## Connect
 
-In Forge, copy the notebook into a project you can write. The runtime supplies credentials and the notebook fills in that project's `team/project` value. The hosted workshop gateway address is also prefilled for its advertised time window. Paste the pair token and gateway access token supplied by your host into the password fields, then click **Check connection**. No personal API key is needed for the normal hosted path.
+In Forge, copy the notebook into a project you can write. The runtime supplies credentials and the notebook fills in that project's `team/project` value. The hosted workshop gateway address is also prefilled for its advertised time window. Paste the attendee token and gateway access token supplied by your host into the password fields, then click **Check connection**. No personal API key is needed for the normal hosted path.
 
 On a laptop, authenticate with `uv run wandb login`. Never put credentials in source cells or saved outputs. If your account cannot read the template or launch a notebook, ask the host to check access before the workshop.
 
@@ -42,7 +42,7 @@ The model stays fixed. The final comparison changes harness files only. Particip
 
 ## If a request or export stops
 
-Refresh and reconnect using the same pair token and project. Reuse the same action: completed inference is read from the gateway, not issued again. Source changes after the runtime freeze are rejected. Export/readback retries do not run the employee. Keep `.pending-code/journal` when moving this checkout; it contains trace and publication receipts, not credentials.
+Refresh and reconnect using the same attendee token and project. Reuse the same action: completed inference is read from the gateway, not issued again. Source changes after the runtime freeze are rejected. Export/readback retries do not run the employee. Keep `.pending-code/journal` when moving this checkout; it contains trace and publication receipts, not credentials.
 
 A partially exported trace can require repair. Do not run the employee again to repair telemetry. Preserve its audit record and ask the facilitator to inspect the failed export.
 
@@ -60,6 +60,6 @@ The current browser rehearsal completed both improvement rounds, all twelve fres
 
 Native EvalTables publication remains unavailable (HTTP 500). The notebook shows the saved Weave evaluations, W&B artifacts and Report so publication failure does not strand your work. Agent Lens conversations and tool spans were checked in Chrome.
 
-The shared gateway runs in an operator-owned CoreWeave Sandbox with protected HTTPS and a fixed lifetime shown in the notebook. State backups are private. The notebook includes a case-by-case score table and saved Weave links when native EvalTables is unavailable. Access from an external attendee account, 25-pair timing and a human learning rehearsal are separate release checks.
+The shared gateway runs in an operator-owned CoreWeave Sandbox with protected HTTPS and a fixed lifetime shown in the notebook. State backups are private. The notebook includes a case-by-case score table and saved Weave links when native EvalTables is unavailable. Access from an external attendee account, 50-attendee timing and a human learning rehearsal are separate release checks.
 
 ![The invoice tool in Agent Lens](preview/24-native-agent-lens.png)

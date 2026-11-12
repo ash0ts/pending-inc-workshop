@@ -1,4 +1,4 @@
-"""Participant client with pair authentication and optional Forge endpoint access."""
+"""Participant client with individual authentication and optional Forge endpoint access."""
 
 import httpx
 
