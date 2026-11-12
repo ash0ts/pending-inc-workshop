@@ -39,8 +39,11 @@ The gateway controls model quota and remote Sandboxes. Your own Forge credential
 3. Complete dispatch and append the returned observation to the next request. Register the tested source; the runtime freezes when the original execution opens.
 4. Follow the original, manual and candidate attempts through Agent Lens. Compare stored spans with independently saved requests/events.
 5. Write a state scorer and a structured explanation judge; publish development EvalTables.
-6. Edit one harness procedure, then implement two candidate probes and composition.
-7. Carry a cited lesson into onboarding; freeze and compare three versions on four fresh cases.
+6. Select an event from your run, describe the change you expect, and edit one harness procedure. Save and test it with one action.
+7. Complete the probe code, then follow the workbench’s next action through proposals, tests, composition and reflection.
+8. Carry a cited lesson into onboarding; freeze and compare three versions on four fresh cases.
+
+The improvement workbench follows saved progress; there are no round or phase dropdowns. Read the candidate diff above its test button. Disabled actions say what is missing and link to that step.
 
 The model stays fixed. The final comparison changes harness files only. Participant development scores and the protected final grader are labeled separately.
 

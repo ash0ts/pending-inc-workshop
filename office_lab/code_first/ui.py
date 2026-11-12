@@ -127,6 +127,7 @@ CSS = """<style>
 @media(max-width:700px){.office-floor{grid-template-columns:repeat(2,1fr)}.quest h2{font-size:23px}}
 .pixel-desk{width:96px;height:64px;shape-rendering:crispEdges;margin-bottom:8px}.desk{min-height:160px}
 .forge-checkpoint{border-left:3px solid #29877b;background:rgba(41,135,123,.09);padding:12px 16px;margin:12px 0;line-height:1.6;overflow-wrap:anywhere}.forge-checkpoint p{margin:5px 0}.forge-checkpoint a{font-weight:600}
+.pending-diff{white-space:pre-wrap;overflow-wrap:anywhere;padding:14px;background:#8881;border:1px solid #8883;border-radius:6px;max-height:340px;overflow-y:auto;font:13px/1.55 ui-monospace,monospace}.pending-prerequisite{padding:10px 14px;background:rgba(220,174,78,.13);border-left:3px solid #bd8c27;line-height:1.5}.pending-workbench{border-top:2px solid #29877b;padding:12px 0}.pending-workbench h3{margin:0 0 12px}.pending-stepper{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));list-style:none;padding:0;gap:8px}.pending-stepper li{border:1px solid #aaa6;padding:10px;border-radius:5px;font-size:13px;line-height:1.35}.pending-stepper small{display:block;font-weight:700;margin-bottom:4px}.pending-now{border:2px solid #29877b!important;background:#29877b15}.pending-later{opacity:.65}.pending-done small{color:#29877b}@media(max-width:600px){.pending-stepper{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>"""
 
@@ -171,3 +172,184 @@ def publication_summary(publications, comparison):
         for item in publications
     )
     return '<div class="receipt"><p>' + heading + "</p><ul>" + links + "</ul></div>"
+
+
+def prerequisite(block):
+    if not block:
+        return ""
+    return (
+        '<p class="pending-prerequisite" role="status">'
+        + html.escape(block["text"])
+        + ' <a href="#'
+        + html.escape(block["anchor"], quote=True)
+        + '">Go to this step ↑</a></p>'
+    )
+
+
+def improvement_panel(snapshot, button, mission, context=None):
+    import marimo as mo
+
+    from office_lab import visuals
+    from office_lab.code_first import flow
+
+    current = flow.improvement_step(snapshot)
+    if current.get("blocked"):
+        return mo.vstack(
+            [
+                mo.Html(prerequisite({"text": current["blocked"], "anchor": current["anchor"]})),
+                button,
+            ]
+        )
+    number = current.get("round", 2)
+    phase = current.get("phase")
+    name = "Billing" if number == 1 else "Onboarding"
+    steps = []
+    for key, label, _ in flow.PHASES:
+        done = flow.phase_done(snapshot, number, key)
+        state = "Done" if done else "Now" if key == phase else "Later"
+        steps.append(
+            '<li class="pending-'
+            + state.lower()
+            + '"><small>'
+            + state
+            + "</small>"
+            + html.escape(label)
+            + "</li>"
+        )
+    heading = (
+        "Both rounds are complete" if current.get("complete") else f"Round {number} of 2 · {name}"
+    )
+    views = [
+        mo.Html(
+            '<section class="pending-workbench" id="improvement-workbench"><h3>'
+            + heading
+            + '</h3><ol class="pending-stepper">'
+            + "".join(steps)
+            + "</ol></section>"
+        )
+    ]
+    if current.get("complete"):
+        views.append(
+            mo.md(
+                "The employee has tested the selected harness on both development cases and saved its lessons. [Continue to the fresh-case comparison ↓](#final)."
+            )
+        )
+    else:
+        views.append(mo.md("**Next: " + current["label"] + ".** " + current["description"]))
+    if phase == "propose":
+        views.append(mission)
+    if phase in {"probe_a", "probe_b", "execute"}:
+        suffix = "composed" if phase == "execute" else phase[-1]
+        decision = snapshot["decisions"][f"r{number}_{suffix}"]
+        verb = "Retain this harness" if decision["decision"] == "KEEP" else decision["title"]
+        views.extend(
+            [
+                mo.md("**" + verb + "**\n\n**Editor’s rationale:** " + decision["rationale"]),
+                mo.Html(diff_block(decision["diff"]))
+                if decision["diff"]
+                else mo.md(
+                    "The executable files are unchanged. This test still records how that harness behaves."
+                ),
+            ]
+        )
+    round_runs = [
+        r
+        for r in snapshot.get("runs", [])
+        if r["stage"].startswith(f"r{number}_") and r.get("case_id") != "decision"
+    ]
+    if phase == "compose" or current.get("complete"):
+        rows = [
+            {
+                "Run": visuals.stage_label(r["stage"]),
+                "Status": r.get("status"),
+                "Seconds": round(r["seconds"], 2) if r.get("seconds") is not None else None,
+                "Model USD": r.get("observed_usd"),
+                "Tools": len(r.get("events", [])),
+            }
+            for r in round_runs
+        ]
+        if rows:
+            views.extend(
+                [
+                    mo.md(
+                        "**What the probes recorded** · Execution status and cost are separate from correctness."
+                    ),
+                    mo.ui.table(
+                        rows,
+                        selection=None,
+                        show_download=False,
+                        show_column_summaries=False,
+                        show_search=False,
+                    ),
+                ]
+            )
+    views.append(button)
+    if context:
+        links = []
+        for run in round_runs:
+            trace = context["journal"].get("trace/" + run["id"], {})
+            if trace.get("verified") and trace.get("url"):
+                links.append(
+                    "["
+                    + visuals.stage_label(run["stage"])
+                    + " in Agent Lens]("
+                    + trace["url"]
+                    + ")"
+                )
+        if links:
+            views.append(mo.md("**Inspect the work:** " + " · ".join(links)))
+    details = {}
+    for n in [1, 2]:
+        decisions = [
+            d for key, d in snapshot.get("decisions", {}).items() if key.startswith(f"r{n}_") and d
+        ]
+        if decisions:
+            parts = [mo.mermaid(visuals.branch_diagram(snapshot, n, compact=True))]
+            parts.extend(
+                mo.vstack(
+                    [
+                        mo.md(
+                            "**" + d["title"] + "**\n\n**Editor’s rationale:** " + d["rationale"]
+                        ),
+                        mo.Html(diff_block(d["diff"])),
+                    ]
+                )
+                for d in decisions
+            )
+            saved_lesson = flow.lesson(snapshot, n)
+            if saved_lesson:
+                parts.append(mo.Html(receipt(saved_lesson)))
+            details[f"Round {n}: saved branches, decisions and lesson"] = mo.vstack(parts)
+    if details:
+        views.append(mo.accordion(details))
+    return mo.vstack(views)
+
+
+def event_summary(event):
+    output = event["output"]
+    if output.get("error"):
+        result = "Reported error: " + json.dumps(output["error"], ensure_ascii=False)
+    else:
+        result = "Tool reported success" if output.get("ok") is True else "Tool returned a response"
+        lists = [
+            f"{name}: {len(value)} records"
+            for name, value in output.items()
+            if isinstance(value, list)
+        ]
+        if lists:
+            result += " · " + "; ".join(lists)
+    return (
+        '<div class="forge-checkpoint"><code>'
+        + html.escape(json.dumps(event["arguments"], ensure_ascii=False))
+        + "</code><p>"
+        + html.escape(result)
+        + "</p></div>"
+    )
+
+
+def diff_block(diff):
+    return (
+        '<pre class="pending-diff" aria-label="Harness file changes">'
+        + html.escape(diff)
+        + "</pre>"
+    )

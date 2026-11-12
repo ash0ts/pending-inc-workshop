@@ -3,7 +3,7 @@
 
 def improve(client, number, phase, execute, hypothesis):
     # The editor can edit harness files only. It cannot edit your frozen tools,
-    # executor, hidden fixtures or final scorer. Each phase has its own run button.
+    # executor, hidden fixtures or final scorer. The workbench runs one phase per click.
     if phase == "propose":
         return client.edit(number, "propose", hypothesis)
     if phase in {"probe_a", "probe_b"}:
