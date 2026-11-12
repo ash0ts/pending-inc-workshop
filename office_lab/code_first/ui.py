@@ -66,3 +66,23 @@ def event_table(run):
         }
         for i, e in enumerate(run.get("events", []))
     ]
+
+
+def publication_summary(publications, comparison):
+    if comparison.get("url"):
+        heading = (
+            '<a href="'
+            + html.escape(comparison["url"], quote=True)
+            + '">Open native EvalTables comparison ↗</a>'
+        )
+    else:
+        heading = "<strong>Native EvalTables is unavailable.</strong> Your Weave evaluations and W&B files were saved. Retry publication after service recovery; do not rerun the employee."
+    links = "".join(
+        '<li><a href="'
+        + html.escape(item["weave_url"], quote=True)
+        + '">Weave evaluation ↗</a> · <a href="'
+        + html.escape(item["run_url"], quote=True)
+        + '">W&B run and harness files ↗</a></li>'
+        for item in publications
+    )
+    return '<div class="receipt"><p>' + heading + "</p><ul>" + links + "</ul></div>"

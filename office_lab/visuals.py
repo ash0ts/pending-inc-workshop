@@ -65,7 +65,7 @@ def event_rows(snapshot):
     ]
 
 
-def branch_diagram(snapshot, round_number=1):
+def branch_diagram(snapshot, round_number=1, *, compact=False):
     """One readable round; decisions and executions only appear when recorded."""
     import textwrap
 
@@ -84,7 +84,8 @@ def branch_diagram(snapshot, round_number=1):
     start = "manual" if n == 1 else "r2_start"
     if start in runs:
         title = "Manual probe" if n == 1 else "Same harness, onboarding task"
-        lines += [f'start_run(("{title}"))', "parent -->|files executed| start_run"]
+        shape = f'start_run("Execution<br/>{title}")' if compact else f'start_run(("{title}"))'
+        lines += [shape, "parent -->|files executed| start_run"]
         parent = "start_run"
     for branch, label in [("a", "Candidate A"), ("b", "Candidate B"), ("composed", "Composition")]:
         stage = f"r{n}_{branch}"
@@ -92,8 +93,19 @@ def branch_diagram(snapshot, round_number=1):
         if not d:
             continue
         title = "Retain this harness" if d["decision"] == "KEEP" else d["title"]
-        title = "<br/>".join(html.escape(t, quote=True) for t in textwrap.wrap(title, 30))
-        lines.append(f'{stage}{{"{label}<br/>{title}"}}')
+
+        def escape_label(text):
+            if not compact:
+                return html.escape(text, quote=True)
+            for char, entity in [("&", "#38;"), ("<", "#60;"), (">", "#62;"), ('"', "#quot;")]:
+                text = text.replace(char, entity)
+            return text
+
+        title = "<br/>".join(escape_label(t) for t in textwrap.wrap(title, 34 if compact else 30))
+        if compact:
+            lines.append(f'{stage}["Decision · {label}<br/>{title}"]')
+        else:
+            lines.append(f'{stage}{{"{label}<br/>{title}"}}')
         based_on = d.get("based_on", "parent")
         base = parent if based_on == "parent" else f"r{n}_{based_on}"
         lines.append(f"{base} -->|based on its files| {stage}")
@@ -103,8 +115,13 @@ def branch_diagram(snapshot, round_number=1):
                     lines.append(f"r{n}_{candidate}_run -. reviewed .-> {stage}")
         if stage in runs:
             status = html.escape(runs[stage]["status"])
+            shape = (
+                f'{stage}_run("{label} execution<br/>{status}")'
+                if compact
+                else f'{stage}_run(("{label} execution<br/>{status}"))'
+            )
             lines += [
-                f'{stage}_run(("{label} execution<br/>{status}"))',
+                shape,
                 f"{stage} -->|selected files executed| {stage}_run",
             ]
     if len(snapshot.get("library", [])) >= n:
@@ -112,6 +129,11 @@ def branch_diagram(snapshot, round_number=1):
     frozen = snapshot.get("freeze")
     if frozen and frozen["stage"].startswith(f"r{n}_"):
         lines += ['freeze["Frozen selection"]', f"{frozen['stage']}_run ==>|selected| freeze"]
+    if compact:
+        lines.insert(
+            0,
+            '%%{init: {"theme":"base","themeVariables":{"fontSize":"12px","primaryColor":"#f4f4f4","primaryTextColor":"#192938","primaryBorderColor":"#9ca3af","lineColor":"#6b7280"},"flowchart":{"nodeSpacing":20,"rankSpacing":12,"padding":6}}}%%',
+        )
     return "\n".join(lines)
 
 

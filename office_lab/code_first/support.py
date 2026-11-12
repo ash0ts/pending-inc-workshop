@@ -13,7 +13,7 @@ from pathlib import Path
 
 from office_lab.harness import fingerprint
 
-CAMPAIGN = "pending-v4-code"
+CAMPAIGN = "pending-v4-code-r2"
 
 
 def source(function):
@@ -39,7 +39,11 @@ class Journal:
     def put(self, key, value):
         encoded = json.dumps(value, ensure_ascii=False, indent=2)
         # Never persist notebook credentials, even in an error or accidental UI output.
-        for secret in [os.getenv("WANDB_API_KEY"), os.getenv("OFFICE_PAIR_TOKEN")]:
+        for secret in [
+            os.getenv("WANDB_API_KEY"),
+            os.getenv("OFFICE_PAIR_TOKEN"),
+            os.getenv("OFFICE_GATEWAY_ACCESS_TOKEN"),
+        ]:
             if secret and len(secret) > 8 and secret in encoded:
                 raise ValueError("Refusing to save a credential in a notebook receipt")
         fd, name = tempfile.mkstemp(dir=self.root, suffix=".tmp")
@@ -57,6 +61,14 @@ class Journal:
         if old is not None:
             return old
         return self.put(key, operation())
+
+
+def publish_checkpoint(journal, key, operation):
+    """Reuse complete publication; retry unavailable native writes without inference."""
+    old = journal.get(key)
+    if old and old.get("evaluation_id"):
+        return old
+    return journal.put(key, operation())
 
 
 def verify_project(project):

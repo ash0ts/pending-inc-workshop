@@ -1,4 +1,4 @@
-"""Participant client. Only a per-team gateway token enters the notebook."""
+"""Participant client with pair authentication and optional Forge endpoint access."""
 
 import httpx
 
@@ -12,14 +12,20 @@ class GatewayError(RuntimeError):
 
 
 class Client:
-    def __init__(self, url, token):
+    def __init__(self, url, token, *, access_token=None):
         self.url, self.token = url.rstrip("/"), token
+        if access_token and not self.url.startswith("https://"):
+            raise ValueError("Forge endpoint access requires HTTPS")
+        self.access_token = access_token
 
     def call(self, method, **arguments):
+        headers = {"Authorization": "Bearer " + self.token}
+        if self.access_token:
+            headers["X-Sandbox-Share-Token"] = self.access_token
         result = httpx.post(
             self.url + "/office",
             json={"method": method, "arguments": arguments},
-            headers={"Authorization": "Bearer " + self.token},
+            headers=headers,
             timeout=240,
         )
         if result.is_error:

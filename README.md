@@ -22,7 +22,7 @@ Open in **Edit** mode. If only text and inactive code appear, use the bottom-rig
 
 ## Connect
 
-Authenticate with `uv run wandb login` on your laptop. In Forge Notebooks, use a WANDB_API_KEY hosted secret instead. Enter your own `entity/project`, the facilitator's **code-first** gateway URL and your pair token in the setup form. Neither credential belongs in a source cell or saved output.
+Authenticate with `uv run wandb login` on your laptop. In Forge Notebooks, use a WANDB_API_KEY hosted secret instead. Enter your own `entity/project`, the facilitator's **code-first** gateway URL and your pair token in the setup form. For a Forge-hosted gateway, also enter the facilitator's gateway access token; leave that field blank for localhost. These credentials belong in the password fields or hosted secrets, never in source cells or saved output.
 
 The gateway controls model quota and remote Sandboxes. Your own Forge credentials publish your traces and evaluation rows. Setup checks project read access; the setup trace checks trace readback and evaluation write access. Do not use the operator repository: it contains private grading material.
 
@@ -52,4 +52,12 @@ Local tool, message-handoff, timeout and scorer exercises require no provider co
 
 ![The office and code exercises](preview/office.png)
 
-[Watch the captioned walkthrough](preview/pending-code.mp4) · [Captions](preview/pending-code.vtt). The recording separates the complete earlier rehearsal from the current starter's incomplete tool-use check. The first technical rehearsal completed two refinement rounds and all twelve final evaluations. A follow-up with the current starter confirmed invoice-tool use, then exhausted both composition attempts. Both outcomes are retained; the complete replay uses the earlier starter. Native EvalTables publication is currently blocked by an HTTP 500 from its service; Weave publication and Agent Lens readback succeeded. Setup and notebook initialization passed CI on macOS, Windows and Linux. Attendee-account permissions, the duplicated hosted runtime, 25-pair live timing and a rehearsal with two human learners remain release checks; they are not implied by a passing test suite.
+[Watch the earlier captioned walkthrough](preview/pending-code.mp4) · [Captions](preview/pending-code.vtt). It records the previous release; its results are historical.
+
+The current browser rehearsal completed both improvement rounds, all twelve fresh executions and all twelve explanation judgments. All three versions passed four state checks; both compositions retained the manual harness. No quality gain is claimed. [Browser check summary](browser-validation.json).
+
+Native EvalTables publication remains unavailable (HTTP 500). The notebook shows the saved Weave evaluations, W&B artifacts and Report so publication failure does not strand your work. Agent Lens conversations and tool spans were checked in Chrome.
+
+The shared gateway is intended for an operator-owned Forge Sandbox with native HTTPS access control; that endpoint mechanism was tested, but the full gateway migration remains open. There is no Cloudflare tunnel. A facilitator can run the gateway and notebook together on localhost. Attendee-account access, the duplicated hosted runtime, 25-pair timing and a human learning rehearsal remain release checks.
+
+![The invoice tool in Agent Lens](preview/24-native-agent-lens.png)
