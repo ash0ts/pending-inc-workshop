@@ -146,6 +146,51 @@ def test_recorded_success_survives_restart(tmp_path, monkeypatch):
     assert Budget(again, config).summary() == first.budget.summary()
 
 
+def test_expired_credentials_stop_without_transport_retries(tmp_path, monkeypatch):
+    from workshop.provider import ProviderUnavailable
+
+    store, workspace, manifest = configure(tmp_path, "learner/project", 8)
+    store.create_team(workspace["attendee"])
+    monkeypatch.setenv("WANDB_API_KEY", "expired-test-key")
+    calls = []
+
+    def denied(request):
+        calls.append(request)
+        return httpx.Response(401, json={"error": {"message": "invalid credentials"}})
+
+    provider = Provider(store, manifest, transport=httpx.MockTransport(denied))
+    with pytest.raises(ProviderUnavailable, match="401"):
+        provider.complete(workspace["attendee"], "denied", 0, [])
+    assert len(calls) == 1
+    assert provider.budget.summary()["bounded_unknown_usd"] > 0
+
+
+def test_connection_rejects_another_service_and_stale_credentials(tmp_path, monkeypatch):
+    import hashlib
+
+    from office_lab.self_service import CAMPAIGN, connection
+
+    monkeypatch.setattr(httpx, "get", lambda *a, **kw: httpx.Response(200, json={"lab": "other"}))
+    with pytest.raises(RuntimeError, match="occupied"):
+        connection("http://127.0.0.1:8796", tmp_path, "learner/project", 8, "new-key")
+    monkeypatch.setattr(httpx, "get", lambda *a, **kw: httpx.Response(200, json={"lab": CAMPAIGN}))
+    (tmp_path / "access.json").write_text(json.dumps({"token": "local-test"}))
+    (tmp_path / "service.json").write_text(
+        json.dumps({"key_hash": hashlib.sha256(b"old-key").hexdigest()})
+    )
+    monkeypatch.setattr(
+        httpx,
+        "post",
+        lambda *a, **kw: httpx.Response(
+            200,
+            json={"project": "learner/project", "model_allowance_usd": 8},
+            request=httpx.Request("POST", "http://127.0.0.1:8796/office"),
+        ),
+    )
+    with pytest.raises(RuntimeError, match="Credentials or budget changed"):
+        connection("http://127.0.0.1:8796", tmp_path, "learner/project", 8, "new-key")
+
+
 def test_packaged_notebook_has_no_host_token_form():
     import ast
     import base64

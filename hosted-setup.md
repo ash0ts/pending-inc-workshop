@@ -86,5 +86,6 @@ The service log is `.pending-local/gateway.log`; notebook errors are in `.pendin
 - [Current releases and downloadable code](https://github.com/ash0ts/pending-inc-workshop/releases)
 - [Hosted notebook preview](https://forge.coreweave.com/notebooks/Tm90ZWJvb2s6MTU2ODc=)
 - [Office code map](code-map.md)
+- [Release checks and known limitations](validation.md)
 
 A hosted copy cannot reach a service on your laptop at `localhost`. Use the checkout instructions above for the independent workshop. The hosted preview and the November 12 recording remain reference materials.

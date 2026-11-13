@@ -1,4 +1,4 @@
-"""Operator fixtures. Only public_development is bundled for participants."""
+"""Public fictional teaching cases. Only development cases enter improvement contexts."""
 
 import copy
 from dataclasses import asdict, dataclass

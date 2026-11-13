@@ -37,8 +37,8 @@ FORGE_CHECKPOINTS = {
         "Your workbench: edit Python here, run a cell, inspect its output. Agent Lens stores the execution evidence in your project.",
     ),
     "tools": (
-        "Forge SDK + Sandboxes",
-        "Write the lookup and its tool span here. Register it with the gateway, then read the receipt: it identifies the executed source and whether tools ran in a CoreWeave Sandbox or the local fallback.",
+        "Forge SDK + local tools",
+        "Write the lookup and its tool span here. Register it with the gateway, then read the receipt: it identifies the executed source and that your tool ran in restricted local Python.",
     ),
     "loop": (
         "Agent Lens",
@@ -57,7 +57,7 @@ FORGE_CHECKPOINTS = {
         "Find the event that prompted your edit. After the matched run, open its new conversation and check whether the employee used the changed procedure.",
     ),
     "improve": (
-        "Sandboxes + Agent Lens",
+        "Isolated tools + Agent Lens",
         "Each probe starts with its own office state. Open the candidate's saved conversation from its phase result, then compare the trace with the proposed files.",
     ),
     "final": (
