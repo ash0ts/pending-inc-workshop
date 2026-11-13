@@ -269,6 +269,10 @@ def main():
     children = []
     try:
         with socket.socket() as check:
+            if os.name != "nt":
+                # Match the server's bind behavior when a previous connection is
+                # in TIME_WAIT; an active listener still fails this check.
+                check.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             check.bind(("127.0.0.1", args.port))
         url = f"http://127.0.0.1:{args.gateway_port}"
         if not connection(url, state, args.project, args.budget_usd, key):
