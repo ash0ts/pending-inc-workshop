@@ -29,6 +29,8 @@ Your project is filled in automatically. There are no attendee tokens or gateway
 
 The notebook contains starter exercises. Read each task, change its Python cell, and run the local check. The **Need a hint?** and **Show a worked answer** controls are there if you get stuck. Use marimo's Run button once if the free cells have not initialized.
 
+Without provider access, you can still use the local practice exercises. Expand **Saved work on this laptop** to refresh or download completed execution evidence without logging into Forge.
+
 ## Where the work happens
 
 | Component | Location |

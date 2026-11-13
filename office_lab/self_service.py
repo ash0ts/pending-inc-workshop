@@ -183,7 +183,7 @@ def service(root, project, budget, port):
 def connection(url, state, project, budget, key):
     try:
         response = httpx.get(url + "/health", timeout=2, trust_env=False)
-    except httpx.ConnectError:
+    except (httpx.ConnectError, httpx.TimeoutException):
         return False
     if response.status_code != 200 or response.json().get("lab") != CAMPAIGN:
         raise RuntimeError("The gateway port is occupied. Choose another --gateway-port.")
@@ -348,7 +348,7 @@ def main():
                     == 200
                 ):
                     break
-            except httpx.ConnectError:
+            except (httpx.ConnectError, httpx.TimeoutException):
                 pass
             time.sleep(0.25)
         else:

@@ -155,6 +155,34 @@ def _(Client, LOCAL_CONNECTION, connection_form, flow, mo, set_connection, set_o
 
 
 @app.cell(hide_code=True)
+def _(mo):
+    refresh_local_evidence = mo.ui.run_button(label="Refresh saved local work")
+    mo.accordion({"Saved work on this laptop · no Forge login needed": refresh_local_evidence})
+    return (refresh_local_evidence,)
+
+
+@app.cell(hide_code=True)
+def _(Client, LOCAL_CONNECTION, json, mo, refresh_local_evidence):
+    mo.stop(not LOCAL_CONNECTION)
+    _refresh = refresh_local_evidence.value
+    try:
+        _local_client = Client(LOCAL_CONNECTION["gateway"], LOCAL_CONNECTION["token"])
+        _local_setup = _local_client.setup()
+        _local_saved = _local_client.snapshot()
+        _local_rows = [{"Case": r.get("case_title", r["case_id"]), "Stage": r["stage"], "Status": r["status"], "State check": r.get("scores", {}).get("task_success"), "Harness": r.get("fingerprint", "")} for r in _local_saved["runs"]]
+        _local_items = [mo.md("**Local workspace allowance: $" + str(_local_setup["model_allowance_usd"]) + ".** Saved spend and reservations: $" + str(_local_saved["budget"]["accounted_usd"]) + ". Reading these records makes no provider request.")]
+        if _local_rows:
+            _local_items.append(mo.ui.table(_local_rows, selection=None, show_column_summaries=False))
+        else:
+            _local_items.append(mo.md("No executions saved yet. The invoice, handoff, timeout and scorer practice exercises work without provider access."))
+        _local_items.append(mo.download(json.dumps(_local_saved, indent=2).encode(), filename="pending-local-evidence.json", label="Download saved execution evidence"))
+        mo.output.replace(mo.accordion({"Local receipts, scores and evidence": mo.vstack(_local_items)}))
+    except Exception as _local_error:
+        mo.output.replace(mo.callout("Could not read the local service: " + str(_local_error) + ". Your files remain in the workspace directory.", kind="warn"))
+    return
+
+
+@app.cell(hide_code=True)
 def _(flow, get_progress, mo, ui):
     _blocked = flow.blocked("setup_trace", get_progress())
     setup_trace = mo.ui.run_button(label="Send my first Forge trace", disabled=bool(_blocked), full_width=True)
