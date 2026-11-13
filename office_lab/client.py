@@ -152,3 +152,14 @@ class Client:
     def judge_development(self, execution_id, rubric):
         return self.call("judge_development", execution_id=execution_id, rubric=rubric)
 
+
+class DirectClient:
+    """Operator-only adapter for tests and rehearsal; not in participant bundles."""
+
+    def __init__(self, gateway, team):
+        self.gateway, self.team = gateway, team
+
+    def __getattr__(self, name):
+        if name.startswith("_"):
+            raise AttributeError(name)
+        return lambda *a, **kw: getattr(self.gateway, name)(self.team, *a, **kw)

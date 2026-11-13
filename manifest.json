@@ -1,0 +1,47 @@
+{
+  "campaign": "pending-self-service-v1",
+  "teaching_release": "pending-self-service-v1",
+  "project": "",
+  "model": "zai-org/GLM-5.3-Flash",
+  "base_url": "https://api.inference.wandb.ai/v1",
+  "max_steps": 16,
+  "max_input_tokens": 24576,
+  "max_output_tokens": 4096,
+  "improver_max_output_tokens": 16384,
+  "improver_timeout_seconds": 180,
+  "temperature": 0.2,
+  "transport_retries": 2,
+  "request_timeout_seconds": 180,
+  "global_concurrency": 2,
+  "team_concurrency": 2,
+  "budget_usd": 8,
+  "buckets_usd": {
+    "workshop": 8,
+    "rehearsal": 0,
+    "recovery": 0
+  },
+  "team_workshop_usd": 8,
+  "prices_per_million": {
+    "input": 0.12,
+    "cached": 0.02,
+    "output": 0.38
+  },
+  "price_source": "https://coreweave.com/forge-pricing/inference-agents",
+  "prices_checked": "2026-11-12",
+  "sandbox_prices_hourly": {
+    "cpu": 0.128,
+    "memory_gib": 0.0212
+  },
+  "development_cases": 2,
+  "heldout_cases": 4,
+  "fixture_version": "office-v1",
+  "heldout_gate": "frozen-harness",
+  "native_scores": "independent final-state checks and separate LLM explanation review",
+  "insights": "prepared verified example only; no live clustering requirement",
+  "service_name": "pending-inc",
+  "agent_name": "office-employee",
+  "improver_name": "process-improvement",
+  "final_executions": 12,
+  "judge_reasoning_effort": "low",
+  "improver_reasoning_effort": "low"
+}

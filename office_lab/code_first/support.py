@@ -13,7 +13,7 @@ from pathlib import Path
 
 from office_lab.harness import fingerprint
 
-CAMPAIGN = "pending-v4-code-r2"
+CAMPAIGN = os.getenv("PENDING_CAMPAIGN", "pending-self-service-v1")
 
 
 def local_connection():
@@ -127,7 +127,15 @@ def doctor(client, project):
         raise ValueError("Use the locked Forge SDK: coreweave==0.1.0b0")
     setup = client.setup()
     if setup["campaign"] != CAMPAIGN:
-        raise ValueError("This is the old workshop gateway; ask for the code-first endpoint")
+        raise ValueError(
+            "This service uses a different workshop release. Start the service from this checkout."
+        )
+    if setup.get("project") and setup["project"] != project:
+        raise ValueError(
+            "This local workspace belongs to "
+            + setup["project"]
+            + ". Restart with a new --state to use a different project."
+        )
     return {
         "python": platform.python_version(),
         "platform": platform.system(),

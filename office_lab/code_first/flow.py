@@ -97,7 +97,7 @@ def improvement_step(snapshot):
                 )
                 if run and decision and run["fingerprint"] != decision["fingerprint"]:
                     return {
-                        "blocked": "The saved test used different files from this decision. Ask the facilitator to inspect its receipt before continuing.",
+                        "blocked": "The saved test used different files from this decision. Inspect the saved decision and execution receipt before continuing; do not run different files under the same version.",
                         "anchor": "improve",
                         "label": "Harness mismatch: inspect the saved test",
                     }

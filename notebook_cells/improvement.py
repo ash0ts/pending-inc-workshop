@@ -3,7 +3,7 @@
 
 def improve(client, number, phase, execute, hypothesis):
     # The editor can edit harness files only. It cannot edit your frozen tools,
-    # executor, hidden fixtures or final scorer. The workbench runs one phase per click.
+    # executor, final fixtures or final scorer. The workbench runs one phase per click.
     if phase == "propose":
         return client.edit(number, "propose", hypothesis)
     if phase in {"probe_a", "probe_b"}:
@@ -49,6 +49,6 @@ def evaluate_versions(client, execute):
         # Interleave versions; every execution starts from its own original state.
         for stage, harness in versions[index % 3 :] + versions[: index % 3]:
             execute(case["id"], stage, Harness(**harness))
-    client.grade()  # independent protected state scorer, after all 12 runs
+    client.grade()  # independent final state scorer, after all 12 runs
     client.evaluate()  # fixed final explanation rubric; unavailable stays missing
     return client.snapshot()

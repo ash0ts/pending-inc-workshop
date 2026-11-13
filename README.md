@@ -1,68 +1,90 @@
-# Please Improve Yourself
+# Run Pending, Inc. yourself
 
-Your manager has hired an autonomous employee for billing and onboarding. You supply its instructions, tools and checks. Then your manager asks whether an agent could improve those too.
+The complete workshop runs on your laptop. You write the employee's tools, inspect its work in Agent Lens, edit its harness, then build an agent that proposes and tests further changes. The accounts and payments are fictional. The model calls, traces, and evaluations are real.
 
-Build the employee in a Forge Notebook, run its tools in Sandboxes, and inspect each completed attempt in Agent Lens. Compare the original and revised harnesses on fresh cases before deciding what to keep. The company, accounts and payments are fictional; the code and execution records are real.
+You use your own Forge account and inference billing. There is no shared workshop gateway to renew.
 
-[Workshop slides (PDF)](https://github.com/ash0ts/pending-inc-workshop/releases/download/workshop-2026-11-12/pending-harness2-workshop.pdf) · [All downloads, including the interactive deck](https://github.com/ash0ts/pending-inc-workshop/releases/tag/workshop-2026-11-12) · [Setup guide](hosted-setup.md)
+## Before you start
 
-[Open the code map](code-map.md) for the harness, office simulator, instrumentation and improvement controller. The notebook also has an **Office Lab source** viewer. You can read the implementation without a gateway connection.
+1. Install [Git](https://git-scm.com/downloads) and [uv](https://docs.astral.sh/uv/getting-started/installation/). uv installs Python if needed. Python 3.11–3.13 is supported.
+2. Sign in to [Forge](https://forge.coreweave.com). Create a project named `pending-inc` in your personal entity or a team where you can write. Copy its `entity/pending-inc` name from the project URL. This is your destination for inference usage, traces, and results.
+3. Ensure your account has W&B Inference access and available credits or billing. A writable project alone does not grant inference access. No hosted Notebook or remote Sandbox entitlement is required for this local path.
+4. Get your API key from [W&B authorization](https://wandb.ai/authorize). Enter it only in the login command below, not in notebook code, chat, or GitHub.
 
-## Run the notebook
+## Run the workshop
 
-[Open the Forge notebook](https://forge.coreweave.com/notebooks/Tm90ZWJvb2s6MTU2ODc=) or use the checkout below. Use **Copy to project** to make your own working copy in a project you can write, then open **Edit**. Your destination team must have hosted Notebook/Sandbox access. The public template does not grant that entitlement. [Complete setup](hosted-setup.md).
-
-Install [uv](https://docs.astral.sh/uv/getting-started/installation/). These commands are the same in macOS/Linux terminals and Windows PowerShell:
+These commands work in macOS/Linux terminals and Windows PowerShell. Replace `YOUR_ENTITY` with your own entity or team name.
 
 ```sh
 git clone https://github.com/ash0ts/pending-inc-workshop.git
 cd pending-inc-workshop
 uv sync --frozen
-uv run python check_setup.py
-uv run marimo edit office_notebook.py
+uv run wandb login
+uv run python start.py --project YOUR_ENTITY/pending-inc
 ```
 
-Python 3.11–3.13 is supported; uv can install it. No Docker, Node, Electron or local gateway is required. Keep this checkout private once you add your own notes or results.
+The browser opens your editable marimo notebook. Keep the terminal open. Click **Check my setup**, then **Send my first Forge trace**. Open that conversation in Agent Lens before running the employee.
 
-Open in **Edit** mode. If only text and inactive code appear, use the bottom-right Run button once to initialize the notebook. Initialization makes no provider or Sandbox calls. Edit the visible Python cells, run their local checks, and use the explicit buttons for paid work. The tool, dispatcher, observation builder, span instrumentation, development scorer, judge validator and improvement controller are yours to implement. Worked answers are available on request in each chapter.
+Your project is filled in automatically. There are no attendee tokens or gateway fields to copy. Opening the notebook and editing code do not send model requests. Explicit run buttons do.
 
-## Connect
+The notebook contains starter exercises. Read each task, change its Python cell, and run the local check. The **Need a hint?** and **Show a worked answer** controls are there if you get stuck. Use marimo's Run button once if the free cells have not initialized.
 
-The November 12 live gateway window has ended. Copying the notebook, editing code, and local practice still work. Live model calls and remote tools require renewed gateway access from the facilitator. [Current setup instructions](hosted-setup.md).
+## Where the work happens
 
-In Forge, copy the notebook into a project you can write. The runtime supplies credentials and the notebook fills in that project's `team/project` value. The hosted workshop gateway address is also prefilled for its advertised time window. Paste the attendee token and gateway access token supplied by your host into the password fields, then click **Check connection**. No personal API key is needed for the normal hosted path.
+| Component | Location |
+|---|---|
+| Notebook, draft code, office state, and execution receipts | Your laptop |
+| Invoice tool | Restricted local Python interpreter; no host files or network |
+| Onboarding tools | Local MCP server using the fictional office |
+| Fixed model and explanation judge | W&B Inference, billed to your selected project |
+| Conversations and spans | Agent Lens in your project |
+| Cases, evaluations, harness files, and Report | Weave, EvalTables, and W&B in your project |
 
-On a laptop, authenticate with `uv run wandb login`. Never put credentials in source cells or saved outputs. If your account cannot read the template or launch a notebook, ask the host to check access before the workshop.
+Local tool receipts say `local-restricted-python`. This release does not create remote CoreWeave Sandboxes. The notebook still teaches isolation, source fingerprints, and MCP using the local backend.
 
-The gateway controls model quota and tool execution. Its connection receipt states whether it uses remote CoreWeave Sandboxes or the local fallback. Your own Forge credentials publish your traces and evaluation rows. Setup checks project read access; the setup trace checks trace readback and evaluation write access. Do not use the operator repository: it contains private grading material.
+## Spending and saving
 
-## What you will change
+The default allowance is **$8 for the entire local workspace**, including previous calls, retries, and reserved unknown costs. It is a stop limit, not a promise that the workshop costs $8. You can set your own limit:
 
-1. Write `lookup_invoice` and its input schema. Test the same invoice on two accounts.
-2. Add a Forge tool span before the first model run. The registered-tool test exports its real lookup calls to Agent Lens.
-3. Complete dispatch and append the returned observation to the next request. Register the tested source; the runtime freezes when the original execution opens.
-4. Follow the original, manual and candidate attempts through Agent Lens. Compare stored spans with independently saved requests/events.
-5. Write a state scorer and a structured explanation judge; publish development EvalTables.
-6. Select an event from your run, describe the change you expect, and edit one harness procedure. Save and test it with one action.
-7. Complete the probe code, then follow the workbench’s next action through proposals, tests, composition and reflection.
-8. Carry a cited lesson into onboarding; freeze and compare three versions on four fresh cases.
+```sh
+uv run python start.py --project YOUR_ENTITY/pending-inc --budget-usd 12
+```
 
-The improvement workbench follows saved progress; there are no round or phase dropdowns. Read the candidate diff above its test button. Disabled actions say what is missing and link to that step.
+Stop an already-running launcher with Ctrl+C before changing its budget or credentials. Provider prices and settings are saved with the workspace; usage and costs remain visible. The model is `zai-org/GLM-5.3-Flash`. A missing model or unavailable inference is reported; the runtime does not switch models.
 
-The model stays fixed. The final comparison changes harness files only. Participant development scores and the protected final grader are labeled separately.
+Your editable copy is `.pending-local/my_workshop.py`. The local database, execution receipts, notebook journal, and connection credentials stay under `.pending-local/`, which is ignored by Git. Do not share that directory: it contains your connection credentials and work. Restart the same command to resume. Updates to the template never overwrite your existing notebook copy.
 
-## If a request or export stops
+To start another experiment, use a new directory:
 
-Refresh and reconnect using the same attendee token and project. Reuse the same action: completed inference is read from the gateway, not issued again. Source changes after the runtime freeze are rejected. Export/readback retries do not run the employee. Keep `.pending-code/journal` when moving this checkout; it contains trace and publication receipts, not credentials.
+```sh
+uv run python start.py --project YOUR_ENTITY/pending-inc --state .pending-local/experiment-2
+```
 
-A partially exported trace can require repair. Do not run the employee again to repair telemetry. Preserve its audit record and ask the facilitator to inspect the failed export.
+A workspace stays bound to its original project. Use a new `--state` when changing projects. Stop the previous launcher before starting another, or supply unused `--port` and `--gateway-port` values. Both services listen only on this laptop.
 
-## Inspect your code and results
+## What the final comparison means
 
-The **Office Lab source** viewer opens your draft instructions and the Python behind the harness, tools and improvement controller. The code map links to the same files on GitHub.
+The workshop includes two development cases and four final cases. You compare the starting, manually revised, and recursively revised harnesses once on each final case: **12 final executions**.
 
-![The employee’s handbook inside marimo](preview/handbook.png)
+The final cases and grading code are public teaching materials. The agent does not receive them during improvement, and the controller waits for the freeze before final execution and grading. They are not a secret benchmark against a learner who can inspect the checkout. Development scorers you edit and the fixed final scorer are labeled separately.
 
-Native EvalTables publication is currently returning HTTP 500. Use the notebook’s case-by-case score table and saved Weave evaluations to compare your results. Agent Lens links connect each completed attempt to its tool activity. The final Report preserves your conclusion and evidence; publication retries reuse saved executions.
+## If something stops
 
-Local tool, message-handoff, timeout and scorer exercises work without a provider connection. Model runs and remote Sandbox tests need your workshop connection.
+- **No login or HTTP 401:** run `uv run wandb login --relogin`, stop the launcher, and restart it. If `WANDB_API_KEY` is set, update or unset that environment variable too; it takes precedence over saved login.
+- **Project permission denied:** verify that `--project` names a project your account can write. Use a new `--state` to change projects without mixing saved work.
+- **Inference access, credit, or model error:** resolve access or billing on your own account. Local exercises and saved receipts remain available. Do not change the model to make an existing comparison continue.
+- **Port occupied:** stop your earlier launcher or choose unused `--port` and `--gateway-port` values. The launcher does not terminate other services.
+- **Trace export interrupted:** retry export using the saved audit record. Exporting does not run the employee again.
+- **EvalTables unavailable:** use the notebook's case-by-case comparison and saved Weave evaluations. Retry publication after service recovery; keep unavailable judgments missing.
+- **A request stopped with uncertain usage:** its reservation remains charged locally. Completed work is not repeated. Read the saved error before retrying; do not delete the ledger to erase spending.
+
+The service log is `.pending-local/gateway.log`; notebook errors are in `.pending-local/notebook.log`. Never publish logs without checking them for credentials and private work.
+
+## Materials
+
+- [Workshop slides and interactive deck](https://github.com/ash0ts/pending-inc-workshop/releases/tag/workshop-2026-11-12)
+- [Current releases and downloadable code](https://github.com/ash0ts/pending-inc-workshop/releases)
+- [Hosted notebook preview](https://forge.coreweave.com/notebooks/Tm90ZWJvb2s6MTU2ODc=)
+- [Office code map](code-map.md)
+
+A hosted copy cannot reach a service on your laptop at `localhost`. Use the checkout instructions above for the independent workshop. The hosted preview and the November 12 recording remain reference materials.

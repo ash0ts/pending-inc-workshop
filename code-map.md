@@ -25,7 +25,7 @@ The notebook builds the employee, its checks, and the editor that changes its ha
 | [Improvement controller](notebook_cells/improvement.py) | Propose, probe, compose, execute, reflect, then repeat. |
 | [Gateway client](office_lab/client.py) | Requests and durable execution receipts. No provider credentials. |
 
-The files above are public teaching code. The participant repository excludes held-out fixtures, final graders, budget controls and host credentials. Editing a file in this reference directory does not replace an already registered runtime; implement the exercises in the notebook.
+The files above are public teaching code. The self-service repository includes the fictional final cases, final graders, and local budget controls. Final cases stay out of improvement prompts; learners can inspect the files. Host credentials and historical execution records are not included. Editing a file in this reference directory does not replace an already registered runtime; implement the exercises in the notebook.
 
 ## Keep Forge beside the notebook
 
