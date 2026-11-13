@@ -1,5 +1,7 @@
 # Start the Pending, Inc. workshop
 
+**After the workshop:** the November 12 gateway window ended at 5:59 p.m. Eastern. You can still copy the notebook, read and edit the code, and use local practice exercises. Model calls and remote tool execution need a renewed gateway address and access from the facilitator. Running marimo on your laptop does not extend that gateway window.
+
 Participants need a Forge account with hosted Notebook/Sandbox access, a project they can write, and two workshop tokens from the facilitator. They need no local install for the hosted path.
 
 [Copy the workshop notebook](https://forge.coreweave.com/notebooks/Tm90ZWJvb2s6MTU2ODc=) · [Slides (PDF)](https://github.com/ash0ts/pending-inc-workshop/releases/download/workshop-2026-11-12/pending-harness2-workshop.pdf) · [GitHub code](https://github.com/ash0ts/pending-inc-workshop) · [All downloads](https://github.com/ash0ts/pending-inc-workshop/releases/tag/workshop-2026-11-12)

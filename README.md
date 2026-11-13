@@ -28,6 +28,8 @@ Open in **Edit** mode. If only text and inactive code appear, use the bottom-rig
 
 ## Connect
 
+The November 12 live gateway window has ended. Copying the notebook, editing code, and local practice still work. Live model calls and remote tools require renewed gateway access from the facilitator. [Current setup instructions](hosted-setup.md).
+
 In Forge, copy the notebook into a project you can write. The runtime supplies credentials and the notebook fills in that project's `team/project` value. The hosted workshop gateway address is also prefilled for its advertised time window. Paste the attendee token and gateway access token supplied by your host into the password fields, then click **Check connection**. No personal API key is needed for the normal hosted path.
 
 On a laptop, authenticate with `uv run wandb login`. Never put credentials in source cells or saved outputs. If your account cannot read the template or launch a notebook, ask the host to check access before the workshop.
