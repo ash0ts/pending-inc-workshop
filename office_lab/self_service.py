@@ -228,6 +228,7 @@ def main():
     parser.add_argument("--port", type=int, default=2762)
     parser.add_argument("--gateway-port", type=int, default=8796)
     parser.add_argument("--headless", action="store_true")
+    parser.add_argument("--check-startup", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--serve", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", args.project):
@@ -356,9 +357,10 @@ def main():
             f"Ready. Project: {args.project}; workspace allowance: ${args.budget_usd:g}.\nTools: local restricted Python and MCP. No remote Sandbox.\nYour editable notebook: {notebook}\nOpen: {browser_url}\nKeep this terminal open. Ctrl+C stops services started here; your work stays saved.",
             flush=True,
         )
-        if not args.headless:
+        if not args.headless and not args.check_startup:
             webbrowser.open(browser_url)
-        process.wait()
+        if not args.check_startup:
+            process.wait()
     except KeyboardInterrupt:
         print("Stopping. Your code and progress are saved.", flush=True)
     except (OSError, RuntimeError, ValueError, httpx.HTTPError) as error:

@@ -191,6 +191,69 @@ def test_connection_rejects_another_service_and_stale_credentials(tmp_path, monk
         connection("http://127.0.0.1:8796", tmp_path, "learner/project", 8, "new-key")
 
 
+def test_actual_launcher_starts_resumes_and_leaves_other_ports_alone(tmp_path):
+    import os
+    import socket
+    import sqlite3
+    import subprocess
+    import sys
+
+    def unused_port():
+        with socket.socket() as sock:
+            sock.bind(("127.0.0.1", 0))
+            return sock.getsockname()[1]
+
+    notebook_port, gateway_port = unused_port(), unused_port()
+    while gateway_port == notebook_port:
+        gateway_port = unused_port()
+    command = [
+        sys.executable,
+        "start.py",
+        "--project",
+        "learner/project",
+        "--state",
+        str(tmp_path),
+        "--port",
+        str(notebook_port),
+        "--gateway-port",
+        str(gateway_port),
+        "--headless",
+        "--check-startup",
+    ]
+    environment = {
+        **os.environ,
+        "WANDB_API_KEY": "no-provider-access-in-startup-test",
+        "PYTHONUTF8": "1",
+    }
+    for attempt in range(2):
+        result = subprocess.run(
+            command, capture_output=True, text=True, encoding="utf-8", env=environment, timeout=90
+        )
+        assert result.returncode == 0, result.stderr
+        assert "Ready. Project: learner/project" in result.stdout
+        notebook = tmp_path / "my_workshop.py"
+        if attempt == 0:
+            notebook.write_text(
+                notebook.read_text(encoding="utf-8") + "\n# My saved exercise\n", encoding="utf-8"
+            )
+        else:
+            assert "# My saved exercise" in notebook.read_text(encoding="utf-8")
+        with sqlite3.connect(tmp_path / "workshop.sqlite") as db:
+            assert db.execute("SELECT count(*) FROM requests").fetchone()[0] == 0
+        for port in [notebook_port, gateway_port]:
+            with socket.socket() as sock:
+                assert sock.connect_ex(("127.0.0.1", port)) != 0
+    with socket.socket() as other:
+        other.bind(("127.0.0.1", notebook_port))
+        other.listen()
+        result = subprocess.run(
+            command, capture_output=True, text=True, encoding="utf-8", env=environment, timeout=30
+        )
+        assert result.returncode != 0 and "Setup stopped" in result.stderr
+        with socket.socket() as probe:
+            assert probe.connect_ex(("127.0.0.1", notebook_port)) == 0
+
+
 def test_packaged_notebook_has_no_host_token_form():
     import ast
     import base64
