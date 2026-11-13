@@ -19,7 +19,7 @@ def test_workspace_is_unique_bound_and_resumable(tmp_path):
     assert resumed["campaign"] == "pending-self-service-v1"
     with pytest.raises(ValueError, match="belongs to"):
         configure(tmp_path / "a", "someone/else", 8)
-    assert json.loads((tmp_path / "a/workspace.json").read_text()) == a
+    assert json.loads((tmp_path / "a/workspace.json").read_text(encoding="utf-8")) == a
 
 
 @pytest.mark.parametrize("budget", [0, -1, float("nan"), float("inf")])
@@ -151,11 +151,11 @@ def test_packaged_notebook_has_no_host_token_form():
     import base64
     import zlib
 
-    tree = ast.parse(Path("office_notebook.py").read_text())
+    tree = ast.parse(Path("office_notebook.py").read_text(encoding="utf-8"))
     strings = [
         n.value for n in ast.walk(tree) if isinstance(n, ast.Constant) and isinstance(n.value, str)
     ]
-    source = Path("office_notebook.py").read_text()
+    source = Path("office_notebook.py").read_text(encoding="utf-8")
     assert "Check my setup" in source and "Attendee token" not in source
     assert "cwsandbox.com" not in source
     payloads = []
@@ -193,7 +193,7 @@ def test_service_authentication_real_lookup_and_mcp_without_provider(tmp_path, m
     app = TestClient(captured[0])
     assert app.get("/health").json()["tool_backend"] == "local-restricted-python"
     assert app.post("/office", json={"method": "setup"}).status_code == 401
-    access = json.loads((tmp_path / "access.json").read_text())
+    access = json.loads((tmp_path / "access.json").read_text(encoding="utf-8"))
 
     def call(method, **args):
         response = app.post(
@@ -224,7 +224,7 @@ def test_service_authentication_real_lookup_and_mcp_without_provider(tmp_path, m
     from workshop.store import Store
 
     store = Store(tmp_path)
-    workspace = json.loads((tmp_path / "workspace.json").read_text())
+    workspace = json.loads((tmp_path / "workspace.json").read_text(encoding="utf-8"))
 
     # Use the actual backend and MCP transport on a development fixture.
     class Saved:

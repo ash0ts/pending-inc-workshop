@@ -36,12 +36,11 @@ def workspace_lock(root):
     """One service owns a workspace, including when a second port is requested."""
     path = Path(root) / "service.lock"
     with path.open("a+b") as handle:
-        handle.seek(0)
-        if not handle.read(1):
-            handle.write(b"0")
-            handle.flush()
-        handle.seek(0)
         try:
+            if os.fstat(handle.fileno()).st_size == 0:
+                handle.write(b"0")
+                handle.flush()
+            handle.seek(0)
             if os.name == "nt":
                 import msvcrt
 
@@ -256,6 +255,7 @@ def main():
         WANDB_PROJECT_PATH=args.project,
         PENDING_CAMPAIGN=CAMPAIGN,
         PENDING_SELF_SERVICE="1",
+        PYTHONUTF8="1",
         # Pinned marimo 0.25.2: initialize free cells; paid cells require run buttons.
         _MARIMO_CONFIG_OVERLOAD_RUNTIME_AUTO_INSTANTIATE="true",
         OFFICE_LOCAL_ACCESS_FILE=str(state / "access.json"),

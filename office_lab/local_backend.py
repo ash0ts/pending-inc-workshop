@@ -41,7 +41,7 @@ class LocalToolsBackend:
         for name_, content in files.items():
             path = root / "harness" / name_
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(content)
+            path.write_bytes(content.encode("utf-8"))
         world = copy.deepcopy(run["world"])
         source = (gateway.get(run["team"], "registration") or {}).get("tool_source", "")
         if name == "lookup_invoice":
